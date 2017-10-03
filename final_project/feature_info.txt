@@ -1,0 +1,165 @@
+Features: ['salary', 'to_messages', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'email_address', 'restricted_stock_deferred', 'total_stock_value', 'shared_receipt_with_poi', 'long_term_incentive', 'exercised_stock_options', 'from_messages', 'other', 'from_poi_to_this_person', 'from_this_person_to_poi', 'poi', 'deferred_income', 'expenses', 'restricted_stock', 'director_fees']
+
+*** FEATURE salary: 
+Availability: 65.1% (95)
+Min:         477.0
+Max:    26704229.0
+Avg:      562194.3
+Med:      259996.0
+Std:     2702034.7
+
+*** FEATURE to_messages: 
+Availability: 58.9% (86)
+Min:          57.0
+Max:       15149.0
+Avg:        2073.9
+Med:        1211.0
+Std:        2567.6
+
+*** FEATURE deferral_payments: 
+Availability: 26.7% (39)
+Min:     -102500.0
+Max:    32083396.0
+Avg:     1642674.2
+Med:      227449.0
+Std:     5095321.6
+
+*** FEATURE total_payments: 
+Availability: 85.6% (125)
+Min:         148.0
+Max:   309886585.0
+Avg:     5081526.5
+Med:     1101393.0
+Std:    28945236.1
+
+*** FEATURE loan_advances: 
+Availability: 2.7% (4)
+Min:      400000.0
+Max:    83925000.0
+Avg:    41962500.0
+Med:    41762500.0
+Std:    40775254.8
+
+*** FEATURE bonus: 
+Availability: 56.2% (82)
+Min:       70000.0
+Max:    97343619.0
+Avg:     2374234.6
+Med:      769375.0
+Std:    10647802.4
+
+*** FEATURE email_address: 
+Availability: 76.0% (111)
+Values: ['mark.metts@enron.com', 'steven.elliott@enron.com', 'bill.cordes@enron.com', 'kevin.hannon@enron.com', 'kristina.mordaunt@enron.com', 'rockford.meyer@enron.com', 'jeffrey.mcmahon@enron.com', 'stanley.horton@enron.com', 'greg.piper@enron.com', 'gene.humphrey@enron.com', 'adam.umanoff@enron.com', 'jeremy.blachman@enron.com', 'marty.sunde@enron.com', 'dana.gibbs@enron.com', 'wes.colwell@enron.com', 's..muller@enron.com', 'charlene.jackson@enron.com', 'dick.westfahl@enron.com', 'rob.walls@enron.com', 'louise.kitchen@enron.com', 'jeffrey.shankman@enron.com', 'john.wodraska@enron.com', 'rick.bergsieker@enron.com', 'philippe.bibi@enron.com', 'paula.rieker@enron.com', 'sally.beck@enron.com', 'david.haug@enron.com', 'john.echols@enron.com', 'gary.hickerson@enron.com', 'richard.lewis@enron.com', 'robert.hayes@enron.com', 'danny.mccarty@enron.com', 'michael.kopper@enron.com', 'dan.leff@enron.com', 'john.lavorato@enron.com', 'david.berberian@enron.com', 'timothy.detmering@enron.com', 'ken.powers@enron.com', 'joe.gold@enron.com', 'james.bannantine@enron.com', 'richard.shapiro@enron.com', 'john.sherriff@enron.com', 'rex.shelby@enron.com', 'joseph.deffner@enron.com', 'joe.kishkill@enron.com', 'greg.whalley@enron.com', 'mike.mcconnell@enron.com', 'jim.piro@enron.com', 'david.delainey@enron.com', 'tod.lindholm@enron.com', 'kenneth.lay@enron.com', 'bob.butts@enron.com', 'cindy.olson@enron.com', 'rebecca.mcdonald@enron.com', 'george.mcclellan@enron.com', 'robert.hermann@enron.com', 'matthew.scrimshaw@enron.com', 'mark.haedicke@enron.com', 'raymond.bowen@enron.com', 'jay.fitzgerald@enron.com', 'michael.moran@enron.com', 'brian.redmond@enron.com', 'tim.belden@enron.com', 'w.duran@enron.com', 'terence.thorn@enron.com', 'andrew.fastow@enron.com', 'tracy.foy@enron.com', 'christopher.calger@enron.com', 'ken.rice@enron.com', 'vince.kaminski@enron.com', 'chip.cox@enron.com', 'jere.overdyke@enron.com', 'frank.stabler@enron.com', 'jeff.skilling@enron.com', 'jeffrey.sherrick@enron.com', 'james.prentice@enron.com', 'mark.pickering@enron.com', 'steven.kean@enron.com', 'kulvinder.fowler@enron.com', 'george.wasaff@enron.com', 'thomas.white@enron.com', 'diomedes.christodoulou@enron.com', 'phillip.allen@enron.com', 'vicki.sharp@enron.com', 'michael.brown@enron.com', 'james.hughes@enron.com', 'richard.dimichele@enron.com', 'sanjay.bhatnagar@enron.com', 'rebecca.carter@enron.com', 'john.buchanan@enron.com', 'julia.murray@enron.com', 'kevin.garland@enron.com', 'keith.dodson@enron.com', 'scott.yeager@enron.com', 'joe.hirko@enron.com', 'janet.dietrich@enron.com', 'james.derrick@enron.com', 'mark.frevert@enron.com', 'lou.pai@enron.com', 'frank.bay@enron.com', 'rod.hayslett@enron.com', 'jim.fallon@enron.com', 'mark.koenig@enron.com', 'larry.izzo@enron.com', 'elizabeth.tilney@enron.com', 'a..martin@enron.com', 'rick.buy@enron.com', 'richard.causey@enron.com', 'mitchell.taylor@enron.com', 'jeff.donahue@enron.com', 'ben.glisan@enron.com']
+
+*** FEATURE restricted_stock_deferred: 
+Availability: 12.3% (18)
+Min:    -7576788.0
+Max:    15456290.0
+Avg:      166410.6
+Med:     -146975.0
+Std:     4083118.5
+
+*** FEATURE total_stock_value: 
+Availability: 86.3% (126)
+Min:      -44093.0
+Max:   434509511.0
+Avg:     6773957.5
+Med:     1102872.5
+Std:    38802870.4
+
+*** FEATURE shared_receipt_with_poi: 
+Availability: 58.9% (86)
+Min:           2.0
+Max:        5521.0
+Avg:        1176.5
+Med:         740.5
+Std:        1171.4
+
+*** FEATURE long_term_incentive: 
+Availability: 45.2% (66)
+Min:       69223.0
+Max:    48521928.0
+Avg:     1470361.5
+Med:      442035.0
+Std:     5897566.6
+
+*** FEATURE exercised_stock_options: 
+Availability: 69.9% (102)
+Min:        3285.0
+Max:   311764000.0
+Avg:     5987053.8
+Med:     1310813.5
+Std:    30909366.8
+
+*** FEATURE from_messages: 
+Availability: 58.9% (86)
+Min:          12.0
+Max:       14368.0
+Avg:         608.8
+Med:          41.0
+Std:        1830.3
+
+*** FEATURE other: 
+Availability: 63.7% (93)
+Min:           2.0
+Max:    42667589.0
+Avg:      919065.0
+Med:       52382.0
+Std:     4564512.8
+
+*** FEATURE from_poi_to_this_person: 
+Availability: 58.9% (86)
+Min:           0.0
+Max:         528.0
+Avg:          64.9
+Med:          35.0
+Std:          86.5
+
+*** FEATURE from_this_person_to_poi: 
+Availability: 58.9% (86)
+Min:           0.0
+Max:         609.0
+Avg:          41.2
+Med:           8.0
+Std:          99.5
+
+*** FEATURE poi: 
+Availability: 100.0% (146)
+Min:           0.0
+Max:           1.0
+Avg:           0.1
+Med:           0.0
+Std:           0.3
+
+*** FEATURE deferred_income: 
+Availability: 33.6% (49)
+Min:   -27992891.0
+Max:        -833.0
+Avg:    -1140475.1
+Med:     -159792.0
+Std:     3984119.1
+
+*** FEATURE expenses: 
+Availability: 65.1% (95)
+Min:         148.0
+Max:     5235198.0
+Avg:      108728.9
+Med:       46950.0
+Std:      530719.3
+
+*** FEATURE restricted_stock: 
+Availability: 75.3% (110)
+Min:    -2604490.0
+Max:   130322299.0
+Avg:     2321741.1
+Med:      451740.0
+Std:    12461247.0
+
+*** FEATURE director_fees: 
+Availability: 11.6% (17)
+Min:        3285.0
+Max:     1398517.0
+Avg:      166804.9
+Med:      108579.0
+Std:      310340.3

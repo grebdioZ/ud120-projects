@@ -54,8 +54,8 @@ def featureFormat( dictionary, features, remove_NaN=True, remove_all_zeroes=True
     # Key order - first branch is for Python 3 compatibility on mini-projects,
     # second branch is for compatibility on final project.
     if isinstance(sort_keys, str):
-        import pickle
-        keys = pickle.load(open(sort_keys, "rb"))
+        import cPickle
+        keys = cPickle.load(open(sort_keys, "rb"))
     elif sort_keys:
         keys = sorted(dictionary.keys())
     else:

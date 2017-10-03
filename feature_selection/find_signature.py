@@ -8,12 +8,18 @@ numpy.random.seed(42)
 ### The words (features) and authors (labels), already largely processed.
 ### These files should have been created from the previous (Lesson 10)
 ### mini-project.
-words_file = "../text_learning/your_word_data.pkl" 
-authors_file = "../text_learning/your_email_authors.pkl"
+#words_file = "../text_learning/your_word_data.pkl"
+#authors_file = "../text_learning/your_email_authors.pkl"
+words_file = "./word_data_overfit.pkl"
+authors_file = "./email_authors_overfit.pkl"
 word_data = pickle.load( open(words_file, "r"))
 authors = pickle.load( open(authors_file, "r") )
 
-
+for i, text in enumerate( word_data ):
+    for sigWord in ["cgermannsf", "sshacklensf"]:
+        text = text.replace(sigWord, "")
+        text = text.replace("  ", " ")
+        word_data[i] = text
 
 ### test_size is the percentage of events assigned to the test set (the
 ### remainder go into training)
@@ -36,8 +42,20 @@ features_train = features_train[:150].toarray()
 labels_train   = labels_train[:150]
 
 
-
 ### your code goes here
+from sklearn import tree
 
+clf = tree.DecisionTreeClassifier()
+clf.fit( features_train, labels_train )
+acc = clf.score( features_test, labels_test )
+print acc
 
+outlierCand= [(index, imp) for index, imp in enumerate(clf.feature_importances_) if imp > 0.05]
+print outlierCand, clf.n_features_, len(vectorizer.get_feature_names())
+for outLier in outlierCand:
+  print vectorizer.get_feature_names()[ outLier[0] ]
+
+#v = TfidfVectorizer(stop_words="english")
+#print "Starting fitting"
+#v.fit(word_data)
 
