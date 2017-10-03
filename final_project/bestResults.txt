@@ -1,0 +1,39 @@
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.794
+* F1        :        0.436
+* Precision :        0.359
+* Recall    :        0.597
+
+Used Features: ['poi', 'shared_receipt_with_poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'exchange_with_poi']
+Feature Scaling: RobustScaler(copy=True, quantile_range=(1, 99), with_centering=True,
+       with_scaling=True) on features ['shared_receipt_with_poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'exchange_with_poi']
+
+SVC(C=1.0, cache_size=200, class_weight='balanced', coef0=0.0,
+  decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
+  max_iter=-1, probability=False, random_state=42, shrinking=True,
+  tol=0.001, verbose=False)
+	Accuracy: 0.80579	Precision: 0.40557	Recall: 0.77200	F1: 0.53177	F2: 0.65385
+	Total predictions: 14000	True positives: 1544	False positives: 2263	False negatives:  456	True negatives: 9737
+
+----------------------------
+
+
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.850
+* F1        :        0.372
+* Precision :        0.500
+* Recall    :        0.375
+
+Used Features: ['poi', 'shared_receipt_with_poi', 'exchange_with_poi']
+
+DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.87933	Precision: 0.46374	Recall: 0.55000	F1: 0.50320	F2: 0.53027
+	Total predictions: 9000	True positives:  550	False positives:  636	False negatives:  450	True negatives: 7364
+
+----------------------------
