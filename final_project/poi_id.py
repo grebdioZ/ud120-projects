@@ -28,6 +28,7 @@ with open("final_project_dataset.pkl", "r") as data_file:
 
 ### Task 2: Remove outliers
 def removeOutliers(data_dict, features_list):
+
     return data_dict
 
 data_dict = removeOutliers( data_dict, features_list )
@@ -91,7 +92,7 @@ def createClassifier( ):
     def __createSVMClassifier( *args, **kwargs ):
         from sklearn.svm import LinearSVC
         return LinearSVC( *args, **kwargs )
-    return __createDecisionTreeClassifier()
+    return __createDecisionTreeClassifier( random_state = 42 )
 
 # Provided to give you a starting point. Try a variety of classifiers.
 clf = createClassifier()
@@ -107,8 +108,22 @@ def trainClassifier( clf, features, labels ):
     from sklearn.cross_validation import train_test_split
     features_train, features_test, labels_train, labels_test = \
         train_test_split(features, labels, test_size=0.3, random_state=42)
+    clf.fit( features_train, labels_train )
+    return features_train, features_test, labels_train, labels_test
 
-trainClassifier( clf, features, labels )
+features_train, features_test, labels_train, labels_test = trainClassifier( clf, features, labels )
+
+def validateClassifier(clf, features_test, labels_test):
+    print "\n"
+    print "* Score:     {:>1.3f}".format( clf.score(features_test, labels_test) )
+    predicted = clf.predict( features_test )
+    from sklearn.metrics import precision_score, recall_score, f1_score
+    print "* Precision: {:>1.3f}".format( precision_score(labels_test, predicted) )
+    print "* Recall:    {:>1.3f}".format( recall_score(labels_test, predicted) )
+    print "* F1:        {:>1.3f}".format( f1_score(labels_test, predicted) )
+
+
+validateClassifier( clf, features_test, labels_test )
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
@@ -118,5 +133,5 @@ trainClassifier( clf, features, labels )
 dump_classifier_and_data(clf, my_dataset, features_list)
 
 import tester
-print "Used Features:", features_list
+print "\nUsed Features:", features_list
 tester.main()
