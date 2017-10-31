@@ -1,39 +1,237 @@
+EMAIIL_POI + SELECTED FINANCIAL with SVC
 ----------------------------
 Average scores for 6 folds:
-* Accuracy  :        0.794
-* F1        :        0.436
-* Precision :        0.359
-* Recall    :        0.597
+* Accuracy  :        0.786
+* F1        :        0.411
+* Precision :        0.339
+* Recall    :        0.625
 
-Used Features: ['poi', 'shared_receipt_with_poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'exchange_with_poi']
+Used Features: Num = 6: ['bonus', 'exchange_with_poi', 'expenses', 'restricted_stock', 'shared_receipt_with_poi', 'total_stock_value']
 Feature Scaling: RobustScaler(copy=True, quantile_range=(1, 99), with_centering=True,
-       with_scaling=True) on features ['shared_receipt_with_poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'exchange_with_poi']
+       with_scaling=True) on features ['shared_receipt_with_poi', 'bonus', 'expenses', 'total_stock_value', 'restricted_stock', 'exchange_with_poi']
 
 SVC(C=1.0, cache_size=200, class_weight='balanced', coef0=0.0,
   decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',
   max_iter=-1, probability=False, random_state=42, shrinking=True,
   tol=0.001, verbose=False)
-	Accuracy: 0.80579	Precision: 0.40557	Recall: 0.77200	F1: 0.53177	F2: 0.65385
-	Total predictions: 14000	True positives: 1544	False positives: 2263	False negatives:  456	True negatives: 9737
+	Accuracy: 0.80564	Precision: 0.40792	Recall: 0.79850	F1: 0.53998	F2: 0.67016
+	Total predictions: 14000	True positives: 1597	False positives: 2318	False negatives:  403	True negatives: 9682
 
+OVERALL COMPUTATION TIME: 0 minutes and 6 seconds
 ----------------------------
 
-
+EMAIL_POI with DTC
 ----------------------------
 Average scores for 6 folds:
-* Accuracy  :        0.850
-* F1        :        0.372
-* Precision :        0.500
-* Recall    :        0.375
+* Accuracy  :        0.862
+* F1        :        0.578
+* Precision :        0.639
+* Recall    :        0.625
+Importances:  [('exchange_with_poi', 0.52253690305408496), ('shared_receipt_with_poi', 0.47746309694591499)]
 
-Used Features: ['poi', 'shared_receipt_with_poi', 'exchange_with_poi']
+Used Features: ['shared_receipt_with_poi', 'exchange_with_poi']
 
-DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
             max_features=None, max_leaf_nodes=None,
-            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_impurity_split=1e-07, min_samples_leaf=4,
             min_samples_split=2, min_weight_fraction_leaf=0.0,
             presort=False, random_state=42, splitter='best')
-	Accuracy: 0.87933	Precision: 0.46374	Recall: 0.55000	F1: 0.50320	F2: 0.53027
-	Total predictions: 9000	True positives:  550	False positives:  636	False negatives:  450	True negatives: 7364
+	Accuracy: 0.89122	Precision: 0.50988	Recall: 0.54200	F1: 0.52545	F2: 0.53526
+	Total predictions: 9000	True positives:  542	False positives:  521	False negatives:  458	True negatives: 7479
 
+----------------------------
+
+EMAIL_POI + EMAILS_TO
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.871
+* F1        :        0.610
+* Precision :        0.594
+* Recall    :        0.681
+Importances >0:  [('exchange_with_poi', 0.36614793649302146), ('shared_receipt_with_poi', 0.31428632832582565), ('emails_From_To_4959_richard.shapiro@enron.com', 0.17265688286028277), ('emails_From_To_2900_john.lavorato@enron.com', 0.097769577721557796), ('emails_From_To_2615_jeff.skilling@enron.com', 0.049139274599312298)]
+
+Used Features: Num = 6111: ['emails_From_To (x6109)', 'exchange_with_poi', 'shared_receipt_with_poi']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.83918	Precision: 0.57993	Recall: 0.41900	F1: 0.48650	F2: 0.44362
+	Total predictions: 11000	True positives:  838	False positives:  607	False negatives: 1162	True negatives: 8393
+
+----------------------------
+
+EMAIL_POI + EMAILS_FROM
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.863
+* F1        :        0.494
+* Precision :        0.500
+* Recall    :        0.556
+Importances >0:  [('shared_receipt_with_poi', 0.26621549584638521), ('exchange_with_poi', 0.25627014384609231), (u'emails_To_From_vince.kaminski@enron.com', 0.17643841794320553), (u'emails_To_From_john.lavorato@enron.com', 0.16732911132457784), (u'emails_To_From_mike.mcconnell@enron.com', 0.13374683103973911)]
+
+Used Features: Num = 2992: ['emails_To_From (x2990)', 'exchange_with_poi', 'shared_receipt_with_poi']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.87118	Precision: 0.68531	Recall: 0.53900	F1: 0.60341	F2: 0.56304
+	Total predictions: 11000	True positives: 1078	False positives:  495	False negatives:  922	True negatives: 8505
+
+OVERALL COMPUTATION TIME: 2 minutes and 59 seconds
+----------------------------
+
+EMAIL_POI + EMAILS_TO_AND_FROM
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.840
+* F1        :        0.456
+* Precision :        0.472
+* Recall    :        0.486
+Importances >0:  [(u'emails_To_From_vince.kaminski@enron.com', 0.28884090626641412), ('exchange_with_poi', 0.27679838921611244), ('shared_receipt_with_poi', 0.26964294613481821), (u'emails_From_To_sally.beck@enron.com', 0.16471775838265523)]
+
+Used Features: Num = 9101: ['emails_From_To (x6109)', 'emails_To_From (x2990)', 'exchange_with_poi', 'shared_receipt_with_poi']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.82945	Precision: 0.54559	Recall: 0.37100	F1: 0.44167	F2: 0.39637
+	Total predictions: 11000	True positives:  742	False positives:  618	False negatives: 1258	True negatives: 8382
+
+OVERALL COMPUTATION TIME: 3 minutes and 41 seconds
+----------------------------
+
+EMAIL_POI + EMAILS_RECEIVED_SUBJ
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.814
+* F1        :        0.364
+* Precision :        0.417
+* Recall    :        0.347
+Importances >0:  [('shared_receipt_with_poi', 0.38595630355940297), ('exchange_with_poi', 0.29326144343720145), ('emails_To_Subject_busi', 0.17604060179046874), ('emails_To_Subject_updat', 0.14474165121292679)]
+
+Used Features: Num = 6305: ['emails_To_Subject (x6303)', 'exchange_with_poi', 'shared_receipt_with_poi']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.80164	Precision: 0.43868	Recall: 0.32550	F1: 0.37371	F2: 0.34321
+	Total predictions: 11000	True positives:  651	False positives:  833	False negatives: 1349	True negatives: 8167
+
+----------------------------
+
+EMAIL_POI + FINANCIAL + EMAILS_FROM
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.879
+* F1        :        0.541
+* Precision :        0.561
+* Recall    :        0.542
+Importances >0:  [('exchange_with_poi', 0.30618446003731142), ('shared_receipt_with_poi', 0.21568428356861929), (u'emails_To_From_john.lavorato@enron.com', 0.14940163246728358), (u'emails_To_From_vince.kaminski@enron.com', 0.13083721961090863), (u'emails_To_From_mike.mcconnell@enron.com', 0.11941732515331872), ('expenses', 0.078475079162558317)]
+
+Used Features: Num = 2996: ['bonus', 'emails_To_From (x2990)', 'exchange_with_poi', 'expenses', 'restricted_stock', 'shared_receipt_with_poi', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.85936	Precision: 0.50997	Recall: 0.39650	F1: 0.44613	F2: 0.41497
+	Total predictions: 14000	True positives:  793	False positives:  762	False negatives: 1207	True negatives: 11238
+
+OVERALL COMPUTATION TIME: 2 minutes and 38 seconds
+----------------------------
+
+EMAIL_POI + FINANCIAL + EMAILS_FROM_AND_TO
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.858
+* F1        :        0.420
+* Precision :        0.533
+* Recall    :        0.403
+Importances >0:  [('exchange_with_poi', 0.31585025036298409), ('shared_receipt_with_poi', 0.22249311724118109), (u'emails_From_To_sally.beck@enron.com', 0.1497844089271364), (u'emails_To_From_vince.kaminski@enron.com', 0.13496755702711494), (u'emails_From_To_greg.piper@enron.com', 0.095952245153682128), ('expenses', 0.080952421287901394)]
+
+Used Features: Num = 9105: ['bonus', 'emails_From_To (x6109)', 'emails_To_From (x2990)', 'exchange_with_poi', 'expenses', 'restricted_stock', 'shared_receipt_with_poi', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.84343	Precision: 0.44489	Recall: 0.38750	F1: 0.41422	F2: 0.39776
+	Total predictions: 14000	True positives:  775	False positives:  967	False negatives: 1225	True negatives: 11033
+
+OVERALL COMPUTATION TIME: 3 minutes and 41 seconds
+----------------------------
+
+Financial features + EMAILS_FROM
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.794
+* F1        :        0.265
+* Precision :        0.247
+* Recall    :        0.333
+Importances >0:  [('expenses', 0.29562537228529928), ('emails_To_From_1629_lavorato@enron.com', 0.16749270823136347), ('salary', 0.11748903592585011), ('emails_To_From_1800_mark.haedicke@enron.com', 0.11259160302601152), ('total_stock_value', 0.10416859028114427), ('emails_To_From_600_david.delainey@enron.com', 0.079401030664890807), ('long_term_incentive', 0.06618793572220287), ('restricted_stock', 0.057043723863237646)]
+
+Used Features: Num = 3003: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_To_From (x2989)', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.83073	Precision: 0.35927	Recall: 0.34400	F1: 0.35147	F2: 0.34695
+	Total predictions: 15000	True positives:  688	False positives: 1227	False negatives: 1312	True negatives: 11773
+
+----------------------------
+
+Financial features + EMAILS_FROM_TO
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.864
+* F1        :        0.411
+* Precision :        0.583
+* Recall    :        0.347
+Importances >0:  [('expenses', 0.24938971056157769), ('emails_To_From_lavorato@enron.com', 0.22383984323282596), ('emails_From_To_bob.butts@enron.com', 0.22014879393145517), ('restricted_stock', 0.16547230156795609), ('emails_From_To_jeff.skilling@enron.com', 0.08762422682353084), ('from_messages', 0.053525123882654298)]
+
+Used Features: Num = 9105: ['bonus', 'emails_From_To (x6109)', 'emails_To_From (x2990)', 'expenses', 'from_messages', 'restricted_stock', 'to_messages', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.85729	Precision: 0.50060	Recall: 0.41850	F1: 0.45588	F2: 0.43269
+	Total predictions: 14000	True positives:  837	False positives:  835	False negatives: 1163	True negatives: 11165
+
+OVERALL COMPUTATION TIME: 5 minutes and 27 seconds
+----------------------------
+
+Financial features + EMAILS_FROM_TO + EMAILS_SUBJ_SENT_AND_RECEIVED
+----------------------------
+Average scores for 6 folds:
+* Accuracy  :        0.829
+* F1        :        0.275
+* Precision :        0.339
+* Recall    :        0.250
+Importances >0:  [('expenses', 0.34003085826825385), (u'emails_From_To_bob.butts@enron.com', 0.18711711538153125), (u'emails_To_From_lavorato@enron.com', 0.15963940372486979), ('total_stock_value', 0.15064082188531727), (u'emails_From_To_jeff.skilling@enron.com', 0.10538143277018763), ('to_messages', 0.057190367969840131)]
+
+Used Features: Num = 22683: ['bonus', 'emails_From_Subject (x7275)', 'emails_From_To (x6109)', 'emails_To_From (x2990)', 'emails_To_Subject (x6303)', 'expenses', 'from_messages', 'restricted_stock', 'to_messages', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.83200	Precision: 0.38703	Recall: 0.30150	F1: 0.33895	F2: 0.31544
+	Total predictions: 14000	True positives:  603	False positives:  955	False negatives: 1397	True negatives: 11045
+
+OVERALL COMPUTATION TIME: 7 minutes and 45 seconds
 ----------------------------

@@ -23,22 +23,22 @@ def parseOutText(f):
 
     ### split off metadata
     content = all_text.split("X-FileName:")
-    words = ""
     if len(content) > 1:
-        ### remove punctuation
-        text_string = content[1].translate(string.maketrans("", ""), string.punctuation)
+        stemmedText = performStemming(content[1])
 
-        ### project part 2: comment out the line below
-        words = [word for word in text_string.split() if word not in ("",) ]
+    return stemmedText
 
-        ### split the text string into individual words, stem each word,
-        ### and append the stemmed word to words (make sure there's a single
-        ### space between each stemmed word)
-        words = [SnowballStemmer( "english", ignore_stopwords=False ).stem( word.strip(" ") ) for word in words]
 
+def performStemming(text):
+    ### remove punctuation
+    text_string = text.translate(string.maketrans("", ""), string.punctuation)
+    words = [word for word in text_string.split() if word not in ("",)]
+    ### split the text string into individual words, stem each word,
+    ### and append the stemmed word to words (make sure there's a single
+    ### space between each stemmed word)
+    words = [SnowballStemmer("english", ignore_stopwords=False).stem(word.strip(" ")) for word in words]
     return " ".join(words)
 
-    
 
 def main():
     ff = open("../text_learning/test_email.txt", "r")

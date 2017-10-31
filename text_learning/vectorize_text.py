@@ -24,7 +24,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
     The data is stored in lists and packed away in pickle files at the end.
 """
 
-if False:
+if True:
     print "Reading data"
     word_data = pickle.load( open("your_word_data.pkl") )
     from_data = pickle.load( open("your_email_authors.pkl") )
@@ -83,5 +83,21 @@ else:
     print "Starting fitting"
     v.fit( word_data )
     #pickle.dump( v, open("fitted_vectorizer.pkl", "w") )
+
+test = v.transform( "give me my money".split(" ") )
+print(test.shape)
+print(test.toarray())
+for y in range(test.shape[0]):
+    for x in range(test.shape[1]):
+        if test[y,x] > 0:
+            print(y, x)
+test = v.transform( "give me my money idiot".split(" "))
+print(test.shape)
+print(test.toarray())
+for y in range(test.shape[0]):
+    for x in range(test.shape[1]):
+        if test[y,x] > 0:
+            print(y, x)
+
 print v.get_feature_names()[30100:30110]
 print v.idf_[30100:30110]
