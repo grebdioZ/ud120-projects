@@ -63,7 +63,7 @@ Bcc: pressler.townes@enron.com"""
 
     @unittest.skip("Takes too long")
     def test_getEmailFileNamesForPOI(self):
-        emailLists = os.listdir(EMAIL_LINK_ROOT)
+        emailLists = os.listdir(g_EMAIL_LINK_ROOT)
         cnt = 0
         step = 100
         for emailList in emailLists[::step]:

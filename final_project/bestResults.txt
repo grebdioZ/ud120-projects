@@ -1,4 +1,411 @@
-EMAIIL_POI + SELECTED FINANCIAL with SVC
+EMAIL_POI with ALL_FINANCIAL and AUTO-FEATURE-SELECTION v2
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.862
+* F1        : 0.578
+* Precision : 0.639
+* Recall    : 0.625
+
+MAX_ALLOWED_F1_DECREASE: 0.1
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 3
+NUM_VALIDATION_FOLDS: 6
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 2: [('exchange_with_poi', 0.559), ('shared_receipt_with_poi', 0.441)]
+
+FEATURES INITIALLY USED for evaluation: Num = 15: ['shared_receipt_with_poi', 'salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'total_stock_value', 'long_term_incentive', 'exercised_stock_options', 'deferred_income', 'expenses', 'restricted_stock', 'director_fees', 'exchange_with_poi']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.89122	Precision: 0.50988	Recall: 0.54200	F1: 0.52545	F2: 0.53526
+	Total predictions: 9000	True positives:  542	False positives:  521	False negatives:  458	True negatives: 7479
+
+OVERALL COMPUTATION TIME: 0 minutes and 8 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT_EMAIL_TO and AUTO-FEATURE-SELECTION v2
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.898
+* F1        : 0.583
+* Precision : 0.639
+* Recall    : 0.625
+
+MAX_ALLOWED_F1_DECREASE: 1.0
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 10
+NUM_VALIDATION_FOLDS: 6
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.495), ('shared_receipt_with_poi', 0.317), (u'emails_SENT_To_sally.beck@enron.com', 0.188)]
+
+FEATURES INITIALLY USED for evaluation: Num = 6124: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.89622	Precision: 0.53078	Recall: 0.56900	F1: 0.54923	F2: 0.56092
+	Total predictions: 9000	True positives:  569	False positives:  503	False negatives:  431	True negatives: 7497
+
+OVERALL COMPUTATION TIME: 0 minutes and 21 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and RECVD_EMAIL_FROM and AUTO-FEATURE-SELECTION (used f1_ext, result with f1 was the same but much faster)
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.889
+* F1        : 0.606
+* Precision : 0.611
+* Recall    : 0.667
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 4: [('shared_receipt_with_poi', 0.379), ('exchange_with_poi', 0.361), (u'emails_RCVD_From_john.lavorato@enron.com', 0.158), (u'emails_RCVD_From_mike.mcconnell@enron.com', 0.102)]
+
+FEATURES INITIALLY USED for evaluation: Num = 3005: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_RCVD_From (x2990)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.88800	Precision: 0.69493	Recall: 0.60276	F1: 0.64557	F2: 0.61918
+	Total predictions: 9000	True positives:  918	False positives:  403	False negatives:  605	True negatives: 7074
+
+OVERALL COMPUTATION TIME: 3 minutes and 51 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT_EMAIL_TO and AUTO-FEATURE-SELECTION v2
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.917
+* F1        : 0.560
+* Precision : 0.611
+* Recall    : 0.542
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 5: [('exchange_with_poi', 0.374), ('shared_receipt_with_poi', 0.228), ('exercised_stock_options', 0.19), (u'emails_SENT_To_sally.beck@enron.com', 0.144), (u'emails_SENT_To_mike.mcconnell@enron.com', 0.064)]
+
+FEATURES INITIALLY USED for evaluation: Num = 6124: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_From_To (x6109)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.88846	Precision: 0.68188	Recall: 0.51550	F1: 0.58713	F2: 0.54195
+	Total predictions: 13000	True positives: 1031	False positives:  481	False negatives:  969	True negatives: 10519
+
+OVERALL COMPUTATION TIME: 4 minutes and 35 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and RCVD_EMAIL_SUBJECTS and AUTO-FEATURE-SELECTION v2
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.851
+* F1        : 0.544
+* Precision : 0.583
+* Recall    : 0.625
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.506), ('shared_receipt_with_poi', 0.389), (u'emails_RCVD_Subject_confer', 0.104)]
+
+FEATURES INITIALLY USED for evaluation: Num = 6318: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_RCVD_Subject (x6303)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.88389	Precision: 0.48257	Recall: 0.62300	F1: 0.54387	F2: 0.58874
+	Total predictions: 9000	True positives:  623	False positives:  668	False negatives:  377	True negatives: 7332
+
+OVERALL COMPUTATION TIME: 6 minutes and 6 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT_EMAIL_SUBJECTS and AUTO-FEATURE-SELECTION v2
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.925
+* F1        : 0.704
+* Precision : 0.750
+* Recall    : 0.708
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 4: [('exchange_with_poi', 0.387), ('shared_receipt_with_poi', 0.29), ('exercised_stock_options', 0.171), (u'emails_From_Subject_confidenti', 0.152)]
+
+FEATURES INITIALLY USED for evaluation: Num = 7290: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_From_Subject (x7275)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.90700	Precision: 0.73061	Recall: 0.62650	F1: 0.67456	F2: 0.64488
+	Total predictions: 13000	True positives: 1253	False positives:  462	False negatives:  747	True negatives: 10538
+
+OVERALL COMPUTATION TIME: 4 minutes and 40 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT/RECVD_EMAIL_TO/FROM/SUBJECTS and AUTO-FEATURE-SELECTION v2 but F1
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.923
+* F1        : 0.650
+* Precision : 0.917
+* Recall    : 0.514
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 4: [('expenses', 0.363), ('restricted_stock', 0.262), (u'emails_SENT_To_bob.butts@enron.com', 0.219), (u'emails_RCVD_From_vince.kaminski@enron.com', 0.155)]
+
+FEATURES INITIALLY USED for evaluation: Num = 22692: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_RCVD_From (x2990)', 'emails_RCVD_Subject (x6303)', 'emails_SENT_Subject (x7275)', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.87231	Precision: 0.64480	Recall: 0.37850	F1: 0.47700	F2: 0.41258
+	Total predictions: 13000	True positives:  757	False positives:  417	False negatives: 1243	True negatives: 10583
+
+OVERALL COMPUTATION TIME: 0 minutes and 29 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT/RECVD_EMAIL_TO/FROM/SUBJECTS and AUTO-FEATURE-SELECTION v2 but F1_ext
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.878
+* F1        : 0.490
+* Precision : 0.583
+* Recall    : 0.458
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 6: [('expenses', 0.334), (u'emails_SENT_To_bob.butts@enron.com', 0.232), (u'emails_RCVD_From_lavorato@enron.com', 0.165), ('total_stock_value', 0.114), (u'emails_RCVD_From_vince.kaminski@enron.com', 0.1), ('shared_receipt_with_poi', 0.056)]
+
+FEATURES INITIALLY USED for evaluation: Num = 22692: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_RCVD_From (x2990)', 'emails_RCVD_Subject (x6303)', 'emails_SENT_Subject (x7275)', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.88943	Precision: 0.64304	Recall: 0.50800	F1: 0.56760	F2: 0.53027
+	Total predictions: 14000	True positives: 1016	False positives:  564	False negatives:  984	True negatives: 11436
+
+OVERALL COMPUTATION TIME: 7 minutes and 54 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT_SUBJ and RCVD_FROM and AUTO-FEATURE-SELECTION v2 but F1_ext
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.915
+* F1        : 0.726
+* Precision : 0.778
+* Recall    : 0.708
+
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 4: [('shared_receipt_with_poi', 0.342), ('exchange_with_poi', 0.329), (u'emails_SENT_Subject_confidenti', 0.169), (u'emails_RCVD_From_vince.kaminski@enron.com', 0.16)]
+
+FEATURES INITIALLY USED for evaluation: Num = 10280: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_RCVD_From (x2990)', 'emails_SENT_Subject (x7275)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.87720	Precision: 0.73594	Recall: 0.60200	F1: 0.66227	F2: 0.62474
+	Total predictions: 10000	True positives: 1204	False positives:  432	False negatives:  796	True negatives: 7568
+
+OVERALL COMPUTATION TIME: 4 minutes and 49 seconds
+----------------------------
+
+
+
+
+
+
+
+*** FROM HERE ON, only the importances of the last evaluated kFold clf were used, above we used the average importance
+
+
+EMAIL_POI with ALL_FINANCIAL and RECVD_EMAIL_FROM and AUTO-FEATURE-SELECTION
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.885
+* F1        : 0.572
+* Precision : 0.611
+* Recall    : 0.611
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 5: [('shared_receipt_with_poi', 0.27), ('exchange_with_poi', 0.24), (u'emails_To_From_vince.kaminski@enron.com', 0.18), (u'emails_To_From_john.lavorato@enron.com', 0.17), (u'emails_To_From_mike.mcconnell@enron.com', 0.14)]
+
+FEATURES INITIALLY USED for evaluation: Num = 3005: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_To_From (x2990)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.87760	Precision: 0.75393	Recall: 0.57600	F1: 0.65306	F2: 0.60453
+	Total predictions: 10000	True positives: 1152	False positives:  376	False negatives:  848	True negatives: 7624
+
+OVERALL COMPUTATION TIME: 0 minutes and 16 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT_EMAIL_TO and AUTO-FEATURE-SELECTION
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.898
+* F1        : 0.583
+* Precision : 0.639
+* Recall    : 0.625
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.415), ('shared_receipt_with_poi', 0.309), (u'emails_From_To_sally.beck@enron.com', 0.276)]
+
+FEATURES INITIALLY USED for evaluation: Num = 6124: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_From_To (x6109)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.89622	Precision: 0.53078	Recall: 0.56900	F1: 0.54923	F2: 0.56092
+	Total predictions: 9000	True positives:  569	False positives:  503	False negatives:  431	True negatives: 7497
+
+OVERALL COMPUTATION TIME: 0 minutes and 19 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT_EMAIL_SUBJECTS and AUTO-FEATURE-SELECTION
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.862
+* F1        : 0.578
+* Precision : 0.639
+* Recall    : 0.625
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.47), ('shared_receipt_with_poi', 0.345), (u'emails_To_Subject_product', 0.185)]
+
+FEATURES INITIALLY USED for evaluation: Num = 6318: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_To_Subject (x6303)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.87622	Precision: 0.45312	Recall: 0.55100	F1: 0.49729	F2: 0.52818
+	Total predictions: 9000	True positives:  551	False positives:  665	False negatives:  449	True negatives: 7335
+
+OVERALL COMPUTATION TIME: 0 minutes and 19 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and RECVD_EMAIL_SUBJECTS and AUTO-FEATURE-SELECTION
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.919
+* F1        : 0.754
+* Precision : 0.750
+* Recall    : 0.792
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.456), ('shared_receipt_with_poi', 0.317), (u'emails_From_Subject_confidenti', 0.227)]
+
+FEATURES INITIALLY USED for evaluation: Num = 7290: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_From_Subject (x7275)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.91600	Precision: 0.60218	Recall: 0.71900	F1: 0.65542	F2: 0.69214
+	Total predictions: 9000	True positives:  719	False positives:  475	False negatives:  281	True negatives: 7525
+
+OVERALL COMPUTATION TIME: 0 minutes and 21 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and SENT/RECVD_EMAIL_TO/FROM/SUBJECTS and AUTO-FEATURE-SELECTION (however no change of best result)
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.919
+* F1        : 0.754
+* Precision : 0.750
+* Recall    : 0.792
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.456), ('shared_receipt_with_poi', 0.317), (u'emails_From_Subject_confidenti', 0.227)]
+
+FEATURES INITIALLY USED for evaluation: Num = 22692: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'emails_From_Subject (x7275)', 'emails_From_To (x6109)', 'emails_To_From (x2990)', 'emails_To_Subject (x6303)', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.91600	Precision: 0.60218	Recall: 0.71900	F1: 0.65542	F2: 0.69214
+	Total predictions: 9000	True positives:  719	False positives:  475	False negatives:  281	True negatives: 7525
+
+OVERALL COMPUTATION TIME: 1 minutes and 0 seconds
+----------------------------
+
+USE ALL USED FEATURES FROM THE AUTO-FEATURE-SELECTION result above (however no change of best result)
+----------------------------
+Best result scores ( averages for 6 folds, unless SIMPLE_EVAL was used ):
+* Accuracy  : 0.919
+* F1        : 0.754
+* Precision : 0.750
+* Recall    : 0.792
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 3: [('exchange_with_poi', 0.456), ('shared_receipt_with_poi', 0.317), ('emails_From_Subject_confidenti', 0.227)]
+
+FEATURES INITIALLY USED for evaluation: Num = 8: ['exchange_with_poi', 'shared_receipt_with_poi', 'emails_From_Subject_confidenti', 'emails_To_Subject_product', 'emails_From_To_sally.beck@enron.com', 'emails_To_From_vince.kaminski@enron.com', 'emails_To_From_john.lavorato@enron.com', 'emails_To_From_mike.mcconnell@enron.com']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.91500	Precision: 0.59833	Recall: 0.71500	F1: 0.65148	F2: 0.68816
+	Total predictions: 9000	True positives:  715	False positives:  480	False negatives:  285	True negatives: 7520
+
+OVERALL COMPUTATION TIME: 0 minutes and 13 seconds
+----------------------------
+
+			
+EMAIL_POI + SELECTED FINANCIAL with SVC
 ----------------------------
 Average scores for 6 folds:
 * Accuracy  :        0.786
@@ -18,6 +425,28 @@ SVC(C=1.0, cache_size=200, class_weight='balanced', coef0=0.0,
 	Total predictions: 14000	True positives: 1597	False positives: 2318	False negatives:  403	True negatives: 9682
 
 OVERALL COMPUTATION TIME: 0 minutes and 6 seconds
+----------------------------
+
+EMAIL_POI with ALL_FINANCIAL and AUTO-FEATURE-SELECTION (in the end same as EMAIL_POI with DTC below)
+----------------------------
+Best result scores for 6 folds:
+* Accuracy  : 0.862
+* F1        : 0.578
+* Precision : 0.639
+* Recall    : 0.625
+
+FEATURES IN BEST CLASSIFIER, with importances: Num = 2: [('exchange_with_poi', 0.52), ('shared_receipt_with_poi', 0.48)]
+Features initially used for evaluation: Num = 15: ['bonus', 'deferral_payments', 'deferred_income', 'director_fees', 'exchange_with_poi', 'exercised_stock_options', 'expenses', 'loan_advances', 'long_term_incentive', 'restricted_stock', 'restricted_stock_deferred', 'salary', 'shared_receipt_with_poi', 'total_payments', 'total_stock_value']
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.89122	Precision: 0.50988	Recall: 0.54200	F1: 0.52545	F2: 0.53526
+	Total predictions: 9000	True positives:  542	False positives:  521	False negatives:  458	True negatives: 7479
+
+OVERALL COMPUTATION TIME: 0 minutes and 3 seconds
 ----------------------------
 
 EMAIL_POI with DTC

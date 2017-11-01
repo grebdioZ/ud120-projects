@@ -59,6 +59,7 @@ def test_classifier(clf, dataset, feature_list, folds = 1000):
                 print "All predictions should take value 0 or 1."
                 print "Evaluating performance for processed predictions:"
                 break
+    f1 = 0
     try:
         total_predictions = true_negatives + false_negatives + false_positives + true_positives
         accuracy = 1.0*(true_positives + true_negatives)/total_predictions
@@ -73,6 +74,7 @@ def test_classifier(clf, dataset, feature_list, folds = 1000):
     except:
         print "Got a divide by zero when trying out:", clf
         print "Precision or recall may be undefined due to a lack of true positive predicitons."
+    return f1
 
 CLF_PICKLE_FILENAME = "my_classifier.pkl"
 DATASET_PICKLE_FILENAME = "my_dataset.pkl"
@@ -95,11 +97,12 @@ def load_classifier_and_data():
         feature_list = pickle.load(featurelist_infile)
     return clf, dataset, feature_list
 
-def main():
-    ### load up student's classifier, dataset, and feature_list
-    clf, dataset, feature_list = load_classifier_and_data()
+def main( clf = None, dataset = None, feature_list = None):
+    if not clf or not dataset or not feature_list:
+        ### load up student's classifier, dataset, and feature_list
+        clf, dataset, feature_list = load_classifier_and_data()
     ### Run testing script
-    test_classifier(clf, dataset, feature_list)
+    return test_classifier(clf, dataset, feature_list)
 
 if __name__ == '__main__':
     main()

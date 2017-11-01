@@ -18,20 +18,29 @@ g_runInfo = {}
 g_computationTimeInfo = [
     ("Start", time.time())
 ]
+g_RUN_PARAMS = {}
 
 SIMPLE_EVAL = False
 RECOMPUTE_EMAILS = False
+DUMP_RESULTS = False
 COMPUTE_PRUNED_EMAIL_VERSION_FOR_FAST_TESTING = False
 USE_PRUNED_EMAIL_VERSION_FOR_FAST_TESTING = False
+OVERWRITE_INITIAL_FEATURE_LIST_FOR_TESTING = False
+
 LOAD_EMAIL_FEATURES = True
 SAVE_EMAIL_FEATURES = False
 RUN_EXTERNAL_VALIDATION = True
+g_RUN_PARAMS["MIN_FEATURE_IMPORTANCE"] = 1e-6
+g_RUN_PARAMS["NUM_VALIDATION_FOLDS"] = 6
+g_RUN_PARAMS["NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL"] = 5
+g_RUN_PARAMS["MAX_ALLOWED_OPT_CRIT_DECREASE"] = 0.2
+g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1_ext"
 
 EMAIL_DETAIL_FEATURES = [
-    ( "To", "From" ),
-    #( "From", "To" ),
-    #( "To", "Subject" ),
-    #( "From", "Subject" ),
+    #(understandableFeatureKeywordToCategory( "RCVD" ), "From" ),
+    #(understandableFeatureKeywordToCategory( "SENT" ), "To" ),
+    #(understandableFeatureKeywordToCategory( "RCVD" ), "Subject" ),
+    (understandableFeatureKeywordToCategory( "SENT" ), "Subject" ),
 ]
 
 
@@ -44,7 +53,7 @@ email_features = ['shared_receipt_with_poi', 'from_poi_to_this_person', 'from_th
 features_list.extend(email_features)
 financial_features = []
 #financial_features = ["deferred_income", "expenses"]
-#financial_features = ['salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'total_stock_value', 'long_term_incentive', 'exercised_stock_options', 'deferred_income', 'expenses', 'restricted_stock', 'director_fees']
+financial_features = ['salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'total_stock_value', 'long_term_incentive', 'exercised_stock_options', 'deferred_income', 'expenses', 'restricted_stock', 'director_fees']
 #financial_features = ['bonus', 'expenses', 'total_stock_value', 'restricted_stock']#, 'salary', 'total_payments']
 features_list.extend(financial_features)
 #features_list.extend(['salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'total_stock_value', 'long_term_incentive', 'exercised_stock_options', 'deferred_income', 'expenses', 'restricted_stock', 'director_fees'])
@@ -128,10 +137,10 @@ def addEmailFeatures( data_dict, features_list ):
         # loadEmailsFromJSON( "emailInfoSubjectsRaw.json" )
         doStemming(emailInfo)
         saveEmailsAsJSON(emailInfo, "emailInfoSubjectsStemmed.json")
-        filterEmails("emailInfoSubjectsStemmed")
+        reformatEmails("emailInfoSubjectsStemmed")
 
     def __addFeature( category, featureName ):
-        log("Creating email feature for category {}: {}".format(category, featureName) )
+        log("Creating email feature for category {}: {}".format( categoryToUnderstandableFeatureKeyword( category ), featureName) )
         newEmailFeature = computeEmailFeature( emailInfoNew, category, featureName )
         for i in range(newEmailFeature["numFeatures"]):
             featureID = newEmailFeature["vectorizer"].get_feature_names()[i]
@@ -146,10 +155,11 @@ def addEmailFeatures( data_dict, features_list ):
                 #if entry[featureNameInDataDict] > 0.0:
                 #    print name, featureNameInDataDict, entry[featureNameInDataDict]
 
-    emailFeatureCacheFileName = "EmailFeatures_To-From_From-To_To-Subject_From-Subject.json" #"EmailFeatures_{}.json".format( "_".join( ["{}-{}".format( category, feature) for category, feature in EMAIL_DETAIL_FEATURES] ) )
+    #emailFeatureCacheFileName = "EmailFeatures_To-From_From-To_To-Subject_From-Subject.json" #"EmailFeatures_{}.json".format( "_".join( ["{}-{}".format( category, feature) for category, feature in EMAIL_DETAIL_FEATURES] ) )
+    emailFeatureCacheFileName = "EmailFeatures_TO_FROM_SUBJECTS.json"
     if LOAD_EMAIL_FEATURES and os.path.isfile( emailFeatureCacheFileName ):
         log("Loading stored email features from " + emailFeatureCacheFileName )
-        (newFeatureValues, newFeatureNames), _ = loadFromJSON( emailFeatureCacheFileName, verbose=True)
+        newFeatureValues, _ = loadFromJSON( emailFeatureCacheFileName, verbose=True)
     else:
         log("Computing email features...")
         if RECOMPUTE_EMAILS:
@@ -167,11 +177,10 @@ def addEmailFeatures( data_dict, features_list ):
         else:
             emailInfoNew = loadEmailsFromJSON("emailInfoSubjectsStemmedFiltered.json")
         newFeatureValues = {}
-        newFeatureNames = {}
-        for category, feature in EMAIL_DETAIL_FEATURES:
-            __addFeature( category, feature )
+        for category, featuresByPerson in EMAIL_DETAIL_FEATURES:
+            __addFeature( category, featuresByPerson )
         if SAVE_EMAIL_FEATURES:
-            saveAsJSON( (newFeatureValues, newFeatureNames), emailFeatureCacheFileName )
+            saveAsJSON( newFeatureValues, emailFeatureCacheFileName )
 
     # Merge with existing features
     features_list.extend( getFeatureListForEmailFeatures(newFeatureValues) )
@@ -179,9 +188,6 @@ def addEmailFeatures( data_dict, features_list ):
         data.update( newFeatureValues[ name ] )
     addComputationTimeInfo("Create email features")
 
-
-def getEmailFeatureNamePrefix(category, feature):
-    return "emails_{}_{}".format( category, feature )
 
 
 def getFeatureListForEmailFeatures( dataDict ):
@@ -239,7 +245,7 @@ def createNewFeatures(data_dict, features_list):
         __addCombinedFeature( 'exchange_with_poi', __sqrtOfProduct, 'ratio_to_poi', 'ratio_from_poi')
         addComputationTimeInfo("Create combined features")
 
-    __addCombinedFeatures()
+    #__addCombinedFeatures()
     if EMAIL_DETAIL_FEATURES:
         addEmailFeatures(data_dict, features_list)
     return data_dict, features_list
@@ -247,7 +253,6 @@ def createNewFeatures(data_dict, features_list):
 data_dict, features_list = createNewFeatures( data_dict, features_list )
 
 #features_list = ['poi', 'exchange_with_poi', 'shared_receipt_with_poi']
-g_runInfo["Used Features"] = "Num = {}: {}".format( len(features_list)-1, summarizeFeatureList( features_list ) )
 
 
 def scaleFeatures(data_dict, featuresToScale):
@@ -270,8 +275,7 @@ def scaleFeatures(data_dict, featuresToScale):
 
     addComputationTimeInfo("Scaled Features")
 
-clf = createClassifier()
-if clf.__class__.__name__ != "DecisionTreeClassifier":
+if createClassifier().__class__.__name__ != "DecisionTreeClassifier":
     scaleFeatures( data_dict, features_list )
 
 #printFeaturesAndStatistics( data_dict, features_list )
@@ -280,48 +284,119 @@ if clf.__class__.__name__ != "DecisionTreeClassifier":
 ### Store to my_dataset for easy export below.
 my_dataset = data_dict
 
-### Extract features and labels from dataset for local testing
-data = featureFormat(my_dataset, features_list, sort_keys=True)
-labels, features = targetFeatureSplit(data)
-addComputationTimeInfo("Target Feature Split")
+# overwrite feature list for testing purposes:
+if OVERWRITE_INITIAL_FEATURE_LIST_FOR_TESTING:
+    features_list = [
+        "poi",
+        "exchange_with_poi",
+        "shared_receipt_with_poi",
+        "emails_From_Subject_confidenti",
+        "emails_To_Subject_product",
+        "emails_From_To_sally.beck@enron.com",
+        "emails_To_From_vince.kaminski@enron.com",
+        "emails_To_From_john.lavorato@enron.com",
+        "emails_To_From_mike.mcconnell@enron.com",
+    ]
+
+initialFeatureListInfo = features_list[1:] if len( features_list ) <= 30 else summarizeFeatureList(features_list)
+g_runInfo["FEATURES INITIALLY USED for evaluation"] = "Num = {}: {}".format(len(features_list) - 1, initialFeatureListInfo )
 
 
-### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
+def ClfResults(featureList):
+    return {
+        "Accuracy": 0,
+        "F1": 0,
+        "Precision": 0,
+        "Recall": 0,
+        "F1_ext": 0,
+        "features_list": copy.copy(featureList),
+        "features_importances": [(f, -1) for f in featureList],
+    }
 
-if SIMPLE_EVAL:
-    ### Task 5: Tune your classifier to achieve better than .3 precision and recall
-    ### using our testing script. Check the tester.py script in the final project
-    ### folder for details on the evaluation method, especially the test_classifier
-    ### function. Because of the small size of the dataset, the script uses
-    ### stratified shuffle split cross validation. For more info:
-    ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
-    def validateClassifier(clf, features_test, labels_test):
-        from sklearn.cross_validation import train_test_split
-        features_train, features_test, labels_train, labels_test = \
-            train_test_split(features, labels, test_size=0.3, random_state=42)
-        addComputationTimeInfo("Train/Test Split")
-        clf.fit( features_train, labels_train )
-        addComputationTimeInfo("Simple Fit")
-        print "\n----------------------------"
-        predicted = clf.predict( features_test )
-        print "Actual:    " + "".join([str(int(l)) for l in labels_test])
-        print "Predicted: " + "".join([str(int(l)) for l in predicted])
-        from sklearn.metrics import precision_score, recall_score, f1_score
-        print "* Score:     {:>1.3f}".format( clf.score(features_test, labels_test) )
-        print "* Precision: {:>1.3f}".format( precision_score(labels_test, predicted) )
-        print "* Recall:    {:>1.3f}".format( recall_score(labels_test, predicted) )
-        print "* F1:        {:>1.3f}".format( f1_score(labels_test, predicted) )
-        addComputationTimeInfo("Simple Eval")
+bestResult = ClfResults(features_list)
 
-    validateClassifier( clf, features_test, labels_test )
 
-else:
-    def kFoldValidation( features, labels, N = 3 ):
+def trainAndEvaluate(featureList, bestResult, allowRecursion=True):
+    ### Extract features and labels from dataset for local testing
+    if not allowRecursion:
+        print("")
+        print("******* trainAndEvaluate: probing only w/o recursion ************** on features {}".format( featureList[1:] ))
+    else:
+        print("")
+        print("******************************************")
+        print("* trainAndEvaluate (current best: {:.3f}) *".format( bestResult[ g_RUN_PARAMS["OPTIMIZATION_CRIT"]] ))
+        print("******************************************")
+
+    data = featureFormat(my_dataset, featureList, sort_keys=True)
+    labels, features = targetFeatureSplit(data)
+    addComputationTimeInfo("Target Feature Split")
+
+
+    ### Task 4: Try a varity of classifiers
+    ### Please name your classifier clf for easy export below.
+    ### Note that if you want to do PCA or other multi-stage operations,
+    ### you'll need to use Pipelines. For more info:
+    ### http://scikit-learn.org/stable/modules/pipeline.html
+
+    # if SIMPLE_EVAL:
+    #
+    #     def validateClassifier(features, labels):
+    #         from sklearn.cross_validation import train_test_split
+    #         features_train, features_test, labels_train, labels_test = \
+    #             train_test_split(features, labels, test_size=0.3, random_state=42)
+    #         addComputationTimeInfo("Train/Test Split")
+    #         clf = createClassifier().fit( features_train, labels_train )
+    #         addComputationTimeInfo("Simple Fit")
+    #         print "\n----------------------------"
+    #         predicted = clf.predict( features_test )
+    #         print "Actual:    " + "".join([str(int(l)) for l in labels_test])
+    #         print "Predicted: " + "".join([str(int(l)) for l in predicted])
+    #         from sklearn.metrics import precision_score, recall_score, f1_score
+    #         scores = {
+    #             "Accuracy": clf.score(features_test, labels_test),
+    #             "Precision": precision_score(labels_test, predicted),
+    #             "Recall": recall_score(labels_test, predicted),
+    #             "F1": f1_score(labels_test, predicted),
+    #         }
+    #         for name, value in scores.iteritems():
+    #             print "* {:<10s}: {:>1.3f}".format( name, value )
+    #         addComputationTimeInfo("Simple Eval")
+    #         return clf, scores
+    #
+    #     clf, scores = validateClassifier( features, labels )
+    #     bestResult.update( scores )
+
+    def kFoldValidation( features, labels, N=3 ):
+        def __updateEvalResults(trainIndices, testIndices):
+            features_train = [features[i] for i in trainIndices]
+            features_test = [features[i] for i in testIndices]
+            labels_train = [labels[i] for i in trainIndices]
+            labels_test = [labels[i] for i in testIndices]
+            #features_train, features_test = selectFeatures(features_train, labels_train, features_test, percentile=20, runInfo=g_runInfo)
+            classifier.fit( features_train, labels_train )
+            evalResults["Importances"].append( classifier.feature_importances_ )
+            predicted = classifier.predict( features_test )
+            evalResults["Accuracy"].append( classifier.score(features_test, labels_test) )
+            evalResults["Precision"].append(precision_score(labels_test, predicted))
+            evalResults["Recall"].append(recall_score(labels_test, predicted))
+            f1 = f1_score(labels_test, predicted)
+            evalResults["F1"].append(f1)
+
+        def __computeMeanScores(meanScores, evalResults):
+            for scoreName in sorted(evalResults.keys()):
+                if scoreName not in ("Importances",):
+                    meanScores[scoreName] = np.mean(evalResults[scoreName])
+                    if allowRecursion:
+                        print "* {:<10s}: {:>1.3f}".format(scoreName, meanScores[scoreName])
+            # Compute average importances
+            meanScores["Importances"] = []
+            for featureIndex in range(len(featureList) - 1):
+                featVec = []
+                for impVec in evalResults["Importances"]:
+                    featVec.append(impVec[featureIndex])
+                meanScores["Importances"].append(np.mean(featVec))
+
         from sklearn.cross_validation import KFold
         from sklearn.metrics import precision_score, recall_score, f1_score
         kf = KFold(len(features), N,random_state = 42)
@@ -330,36 +405,120 @@ else:
             "Precision": [],
             "Recall": [],
             "F1": [],
+            "Importances": []
         }
-        clf = None
+        classifier = None
         for train_indices, test_indices in kf:
-            features_train = [features[i] for i in train_indices]
-            features_test = [features[i] for i in test_indices]
-            labels_train = [labels[i] for i in train_indices]
-            labels_test = [labels[i] for i in test_indices]
-            #features_train, features_test = selectFeatures(features_train, labels_train, features_test, percentile=20, runInfo=g_runInfo)
-            clf = createClassifier().fit( features_train, labels_train )
-            predicted = clf.predict( features_test )
-            evalResults["Accuracy"].append( clf.score(features_test, labels_test) )
-            evalResults["Precision"].append(precision_score(labels_test, predicted))
-            evalResults["Recall"].append(recall_score(labels_test, predicted))
-            f1 = f1_score(labels_test, predicted)
-            evalResults["F1"].append(f1)
-        addComputationTimeInfo( "kFold Validation" )
-        print "\n----------------------------"
-        print("Average scores for {} folds:".format( N ))
-        for scoreName in sorted(evalResults.keys()):
-            scores = evalResults[scoreName]
-            print "* {:<10s}:        {:>1.3f}".format( scoreName, np.mean( scores ) )
-        return clf
+            classifier = createClassifier()
+            __updateEvalResults(train_indices, test_indices)
+        if allowRecursion:
+            addComputationTimeInfo( "kFold Validation" )
+            print "\n----------------------------"
+            print("Average scores for {} folds:".format( N ))
+        meanScores = {}
+        __computeMeanScores(meanScores, evalResults)
 
-    #for n in range(2, 11):
-    #    kFoldValidation(features, labels, N=n)
-    clf = kFoldValidation(features, labels, N=6)
-    if clf.__class__.__name__ == "DecisionTreeClassifier":
-        featureImportances = [(features_list[index+1], imp) for index, imp in enumerate(clf.feature_importances_) if imp > 0 ]
-        print "Importances >0: ", sorted( featureImportances, key=lambda x: -x[1] )
+        featuresByAverageImportance = sorted(
+            [(featureList[index + 1], imp) for index, imp in enumerate(meanScores["Importances"])],
+            key=lambda x: -x[1])
+        return classifier, meanScores, featuresByAverageImportance
 
+    clf, scores, featuresByImportance = kFoldValidation(features, labels, N=g_RUN_PARAMS["NUM_VALIDATION_FOLDS"])
+
+    ### Task 5: Tune your classifier to achieve better than .3 precision and recall
+    ### using our testing script. Check the tester.py script in the final project
+    ### folder for details on the evaluation method, especially the test_classifier
+    ### function. Because of the small size of the dataset, the script uses
+    ### stratified shuffle split cross validation. For more info:
+    ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
+    if clf.__class__.__name__ != "DecisionTreeClassifier":
+        # no need to iterate
+        print("No need to iterate")
+        return bestResult
+    else:
+        #featuresByImportance = sorted(
+        #    [(features_list[index + 1], imp) for index, imp in enumerate(clf.feature_importances_ )],
+        #    key=lambda x: -x[1])
+        numFeatures = len(featureList) - 1 # minus poi
+        featWithNonZeroImportances = [(feat, round(imp, 3)) for feat, imp in featuresByImportance if imp > 0]
+        print ("Importances >0: ", featWithNonZeroImportances)
+        if g_RUN_PARAMS["OPTIMIZATION_CRIT"] == "F1_ext":
+            if len( featWithNonZeroImportances ):
+                # will raise error otherwise
+                scores["F1_ext"] = computeExternalTestResult( clf, data_dict, featureList )
+            else:
+                scores["F1_ext"] = 0.0
+        scores["clf"] = clf
+        scores["features_list"] = copy.copy(featureList)
+        scores["features_importances"] = copy.copy(featuresByImportance)
+        newResultsTooBad = shouldStop( scores, bestResult )
+        updateBestResult( bestResult, scores )
+        if not allowRecursion:
+            print("No recursion allowed, returning.")
+            return bestResult
+        if newResultsTooBad:
+            print("Results have become much worse than with previous feature set, aborting recursion!")
+            return bestResult
+        print( "Trying to remove all features with imp < {}".format( g_RUN_PARAMS["MIN_FEATURE_IMPORTANCE"] ) )
+        featuresToRemove = [feature for feature, imp in featuresByImportance if imp < g_RUN_PARAMS["MIN_FEATURE_IMPORTANCE"] ]
+        if featuresToRemove and len( featuresToRemove ) < numFeatures:
+            removeFeatures(featureList, featuresToRemove)
+            return trainAndEvaluate(featureList, bestResult)
+        else:
+            if numFeatures > 1:
+                print("Threshold removed none or all features, trying removal of each of the {} least important ones.".format( g_RUN_PARAMS["NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL"] ))
+                bestBranchResult = ClfResults(featureList)
+                numBranches = min(numFeatures - 1, g_RUN_PARAMS["NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL"])
+                for i in range( numBranches ):
+                    print( "No feature with with imp below threshold found, removing the one with index {}: {}".format(-i, featuresByImportance[-i]
+                         ))
+                    branchFeatureList = copy.copy(featureList)
+                    removeFeatures(branchFeatureList, [featuresByImportance[-i][0]])
+                    bestBranchResult = trainAndEvaluate(branchFeatureList, bestBranchResult, allowRecursion=False )
+                print("Best result had {} of {} for features {}".format( g_RUN_PARAMS["OPTIMIZATION_CRIT"], bestBranchResult[g_RUN_PARAMS["OPTIMIZATION_CRIT"]], bestBranchResult["features_list"]))
+                if not shouldStop( bestBranchResult, bestResult ):
+                    return trainAndEvaluate(bestBranchResult["features_list"], bestResult, allowRecursion=True)
+                else:
+                    print("No sub-branch warranted further investigation, stopping.")
+            else:
+                print("No more features to remove, stopping.")
+            print("Best {} remains {} with features {}".format( g_RUN_PARAMS["OPTIMIZATION_CRIT"], bestResult[g_RUN_PARAMS["OPTIMIZATION_CRIT"]], bestResult["features_list"][1:] ) )
+            return bestResult
+
+
+def shouldStop( newResults, bestResults ):
+    return (bestResults[g_RUN_PARAMS["OPTIMIZATION_CRIT"]] - newResults[g_RUN_PARAMS["OPTIMIZATION_CRIT"] ]
+            > g_RUN_PARAMS[ "MAX_ALLOWED_OPT_CRIT_DECREASE"] )
+
+
+def updateBestResult(bestResult, scores ):
+    optParam = g_RUN_PARAMS["OPTIMIZATION_CRIT"]
+    if scores[optParam] > bestResult[optParam]:
+        print(
+        "Best {} improved from {} to {} with features {}".format(optParam,
+                                                                 round(bestResult[optParam], 3), round(scores[optParam], 3),
+                                                                 scores["features_list"][1:]))
+        bestResult.update(scores)
+        assert len(bestResult["features_list"]) == len(bestResult["features_importances"]) + 1
+    else:
+        print("Best {} of {} could not be improved (New: {} with features {})".format(optParam,
+                                                                                      round(bestResult[optParam], 3),
+                                                                                      round(scores[optParam], 3),
+                                                                                      scores["features_list"][1:]))
+
+
+bestResult = trainAndEvaluate( features_list, bestResult )
+
+clf = bestResult["clf"]
+features_list = bestResult["features_list"]
+g_runInfo["FEATURES IN BEST CLASSIFIER, with importances"] = "Num = {}: {}".format(
+    len( bestResult["features_importances"] ), [ ( name, round(imp, 3) ) for name, imp in bestResult["features_importances"] ] )
+
+print "\n----------------------------"
+print("Best result scores ( averages for {} folds, unless SIMPLE_EVAL was used ):".format(g_RUN_PARAMS["NUM_VALIDATION_FOLDS"]))
+meanScores = {}
+for scoreName in ["Accuracy", "F1", "Precision", "Recall"]:
+    print "* {:<10s}: {:>1.3f}".format(scoreName, bestResult[scoreName])
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
@@ -367,17 +526,21 @@ else:
 ### generates the necessary .pkl files for validating your results.
 
 print("")
-for name, info in g_runInfo.iteritems():
+for name, info in sorted( g_RUN_PARAMS.iteritems() ):
     print "{}: {}".format(name, info)
+
+for name, info in sorted( g_runInfo.iteritems() ):
+    print "\n{}: {}".format(name, info)
 print("")
-if RUN_EXTERNAL_VALIDATION:
+
+if DUMP_RESULTS:
     dump_classifier_and_data(clf, my_dataset, features_list)
     addComputationTimeInfo("dump_classifier_and_data")
 
-    import tester
-    tester.main()
+if RUN_EXTERNAL_VALIDATION:
+    computeExternalTestResult( clf, my_dataset, features_list )
     addComputationTimeInfo("External Validation (tester)")
 printOverallTimeInfo()
 print "----------------------------\n"
 
-printDetailedComputationTimeInfo()
+#printDetailedComputationTimeInfo()

@@ -12,9 +12,16 @@ from sklearn.feature_selection import SelectPercentile, f_classif
 sys.path.append( "../tools/" )
 from parse_out_email_text import performStemming
 
-EMAIL_LINK_ROOT = os.path.dirname(__file__) + "/emails_by_address/"
-EMAIL_ROOT = os.path.dirname(__file__) + "/../"
-ADDRESS_CATEGORIES = ["From", "To", "Cc", "Bcc"]
+g_EMAIL_LINK_ROOT = os.path.dirname(__file__) + "/emails_by_address/"
+g_EMAIL_ROOT = os.path.dirname(__file__) + "/../"
+g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD = {
+    "From": "SENT",
+    "To"  : "RCVD",
+    "Cc"  : "RCVD-AS-CC",
+    "Bcc" : "RCVD-AS-BCC",
+}
+
+g_ADDRESS_TAGS = ["From", "To", "Cc", "Bcc"]
 
 from numpy import median, std, mean
 
@@ -90,7 +97,7 @@ def getNumEmailsFromTo( emails ):
     numMails = 0
     for e in emails:
         for prefix in ("from", "to"):
-            fname = EMAIL_LINK_ROOT+prefix+"_"+e+".txt"
+            fname = g_EMAIL_LINK_ROOT + prefix + "_" + e + ".txt"
             if not os.path.exists( fname ):
                 #print("No file found: "+fname)
                 pass
@@ -101,8 +108,8 @@ def getNumEmailsFromTo( emails ):
 
 def getEmailFileNames( address, from_or_to ):
     PREFIX_LEN = len("enron_mail_20110402/")
-    with open(EMAIL_LINK_ROOT + from_or_to + "_" + address + ".txt", "r") as f:
-        result = [os.path.abspath(EMAIL_ROOT + line[PREFIX_LEN:-2]) for line in f.readlines()]
+    with open(g_EMAIL_LINK_ROOT + from_or_to + "_" + address + ".txt", "r") as f:
+        result = [os.path.abspath(g_EMAIL_ROOT + line[PREFIX_LEN:-2]) for line in f.readlines()]
     return result
 
 def parseEmailListName( emailList):
@@ -159,14 +166,14 @@ def parseHeader(header):
     __readInfoFromHeader("Subject")
     __readInfoFromHeader("Cc")
     __readInfoFromHeader("Bcc")
-    for addressThingy in ("From", "To", "Cc", "Bcc"):
+    for addressThingy in g_ADDRESS_TAGS:
         cleanUpEmailAddressInfo(info, addressThingy)
     return info
 
 
 def parseAllEmails( ):
     log("Getting email lists...")
-    emailLists = os.listdir(EMAIL_LINK_ROOT)
+    emailLists = os.listdir(g_EMAIL_LINK_ROOT)
     log("Done. Number of email lists: ", len(emailLists) )
     step = 1
     emailInfo = parseEmailsFromLists(emailLists, step = step)
@@ -178,7 +185,7 @@ def parseEmailsFromTo( emailAddresses):
     for e in emailAddresses:
         for prefix in ("from", "to"):
             fname = prefix + "_" + e + ".txt"
-            if os.path.exists(EMAIL_LINK_ROOT + fname):
+            if os.path.exists(g_EMAIL_LINK_ROOT + fname):
                 listFileNames.append(fname)
     log("Number of email lists: ", len(listFileNames) )
     step = 1
@@ -346,7 +353,21 @@ def getNameForAddress(data_dict, addressToFind):
                 return name
     return None
 
-def filterEmails( inputFilenameBase ):
+def reformatEmails(inputFilenameBase):
+    """
+    Reformats the raw email data created from parsing and stemming:
+
+      [OLD] emailInfos[from_address][emailID] -> dict with parsed email
+
+    into the new format
+
+      [NEW] emailInfoNew[person_name][category][emailID] -> dict with parsed email (To/From/Subject/Body/...)
+
+    where category in ["From", "To", "Cc", "Bcc"] indicates where in the address part the person occurs
+    (see also g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD), and emailID remains the ID parsed from the email.
+    This will duplicate some emails (will occur in one person's From category and another ones To category, but
+    that does not hurt.
+    """
     emailInfo = loadEmailsFromJSON(inputFilenameBase+".json")
     with open("final_project_dataset.pkl", "r") as data_file:
         data_dict = cPickle.load(data_file)
@@ -369,54 +390,84 @@ def filterEmails( inputFilenameBase ):
                         newInfos[name][category][id] = info
     log("Result should contain", cnt, "emails")
     printInfo( newInfos )
-    saveEmailsAsJSON( newInfos,inputFilenameBase + "Filtered.json")
+    outputJsonFilename = inputFilenameBase + "Filtered.json"
+    saveEmailsAsJSON(newInfos, outputJsonFilename)
+    return outputJsonFilename
 
 
 def printInfo( emailsByPerson ):
     for name, mails in emailsByPerson.iteritems():
-        for category in ADDRESS_CATEGORIES:
-            print name, category, len(mails.get(category, []))
+        for category in g_ADDRESS_TAGS:
+            print name, categoryToUnderstandableFeatureKeyword(category), len(mails.get(category, []))
 
 
 def computeEmailFeature(emailInfoNew, category, emailProp):
     featureValuesByPerson = __getFeatureValuesByPerson(emailInfoNew, category, emailProp)
-    #allFeatureValues = getListFromDictOfLists(featureValuesByPerson)
     allFeatureValues = featureValuesByPerson.values()
     log("num allFeatureValues:", len(allFeatureValues))
-
     ### text vectorization--go from strings to lists of numbers
-    if emailProp in ADDRESS_CATEGORIES:
+    if emailProp in g_ADDRESS_TAGS:
         vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                                      stop_words='english',
                                      token_pattern=r"(?u)[\S][\S]+")
     else:
         vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                                      stop_words='english' )
-
-
     vectorizer.fit( allFeatureValues )
-    #print(vectorizer.vocabulary_)
     result = {}
     numFeatures = -1
     for personName, featureData in featureValuesByPerson.iteritems():
-        #print(personName, featureData)
         result[personName] = vectorizer.transform( [ featureData ] )
-        #print (type(result[personName]))
-        #print (personName, result[personName].shape)
         result[personName] = numpy.array(result[personName].todense().flatten())[0]
-        #print (result[personName])
         if numFeatures < 0:
-            print("numFeatures after vectorization for category {} and prop {}: {}".format( category, emailProp, len(result[personName])))
+            print("numFeatures after vectorization for category {} and prop {}: {}".format( categoryToUnderstandableFeatureKeyword(category), emailProp, len(result[personName])))
             numFeatures = len( result[personName] )
         else:
             assert numFeatures == len( result[personName] )
-    #idf = vectorizer.idf_
-    #print dict(zip(vectorizer.get_feature_names(), idf))
     return {
         "vectorizedValuesByPerson": result,
         "numFeatures" : numFeatures,
         "vectorizer" : vectorizer
     }
+
+
+def getEmailFeatureNamePrefix(category, feature):
+    return "emails_{}_{}".format( categoryToUnderstandableFeatureKeyword( category ), feature )
+
+
+def categoryToUnderstandableFeatureKeyword( category ):
+    return g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD[ category]
+
+
+def understandableFeatureKeywordToCategory( categoryKeyword ):
+    for category, understandable in g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD.iteritems():
+        if categoryKeyword == understandable:
+            return category
+    raise RuntimeError("Non-existing categoryKeyword: {}".format( categoryKeyword ))
+
+
+def convertEmailFeatureNames(newFeatureValues):
+    """
+    Converts old email cachefile (with confusing from/to categories and thus feature names into new ones with SENT/RCVD
+    """
+    def __replOldWithNewFName(f):
+        for oldKey in g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD.keys():
+            # print "emails_{}_".format( oldKey ), "emails_{}_".format( categoryToUnderstandableFeatureKeyword( oldKey ) )
+            searchString = "emails_{}_".format(oldKey)
+            if searchString in f:
+                return f.replace(searchString, "emails_{}_".format(categoryToUnderstandableFeatureKeyword(oldKey)))
+        return f
+
+    oldEmailFeatureCacheFileName = "EmailFeatures_To-From_From-To_To-Subject_From-Subject.json"
+    log("Loading stored email features from " + oldEmailFeatureCacheFileName)
+    (newFeatureValues, _), _ = loadFromJSON(oldEmailFeatureCacheFileName, verbose=True)
+    for featuresByPerson in newFeatureValues.values():
+        keys = list(featuresByPerson.keys())
+        for key in keys:
+            # print("replacing {} by {}".format( key, __replOldWithNewFName(key) ))
+            featuresByPerson[__replOldWithNewFName(key)] = featuresByPerson.pop(key)
+
+    saveAsJSON(newFeatureValues, "EmailFeatures_TO_FROM_SUBJECTS.json", verbose=True)
 
 
 def selectFeatures(features_train, labels_train, features_test, percentile=10, runInfo=None):
@@ -464,32 +515,23 @@ def __getFeatureValuesByPerson(emailInfoNew, category, emailProp):
             for email in emailInfo[category].values():
                 if emailProp in email.keys():
                     val = email[emailProp]
-                    if emailProp == "Subject" and "org" in val:
+                    if emailProp == "Subject" and "org" in val: # ignore "org", seems pointless
                         continue
                     featureValuesByPerson[personName] += " " + val
     return featureValuesByPerson
 
-#emailInfo = loadEmails("emailInfoRaw.pkl")
-#saveEmails(emailInfo, "emailHeaders.pkl")
-#emailInfo = loadEmails( "emailHeaders.pkl")
-#emailInfo = loadEmailsFromJSON( "emailHeaders.json")
-#doStemming(emailInfo)
-#saveEmailsAsJSON( emailInfo, "emailInfoStemmed.json")
-#emailInfo = loadEmailsFromJSON( "emailInfoStemmedSample.json")
-#pruneEmails(emailInfo, 10)
-#saveEmailsAsJSON( emailInfo, "emailInfoStemmedSample.json" )
 
-# STRUCTURE emailInfo:
-# emailInfos[from_address][emailID]
-# STRUCTuRE newEmailInfosStemmedFiltered:
-# emailInfos[name]["From/To/Cc/By"][emailID] (including duplicates)
+def computeExternalTestResult( clf, data, feature_list ):
+    import tester
+    try:
+        return tester.main( clf=clf, dataset=data, feature_list=feature_list)
+    except ValueError as e:
+        print("ERROR: Exception occurred running tester: {}".format( e ))
+        return 0.0
 
 
-#filterEmails()
-#emailInfo = loadEmailsFromJSON( "newEmailInfosStemmedFiltered.json")
-
-#computeEmailFeatures( emailInfo )
-
-
-
+def removeFeatures(featList, featuresToRemove):
+    for f in featuresToRemove:
+        featList.remove(f)
+    print("New feature list after removeFeatures: " + str(featList[1:]))
 
