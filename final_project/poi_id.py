@@ -1,11 +1,9 @@
 #!/usr/bin/python
 import copy
-import pickle
-import sys
-from math import sqrt
-import random
-
 import itertools
+import pickle
+import random
+from math import sqrt
 
 random.seed(42)
 import numpy as np
@@ -18,12 +16,13 @@ from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
 
 g_runInfo = {}
+g_summaryLog = []
 g_computationTimeInfo = [
     ("Start", time.time())
 ]
 g_RUN_PARAMS = {}
 
-SIMPLE_EVAL = False
+#SIMPLE_EVAL = False
 RECOMPUTE_EMAILS = False
 DUMP_RESULTS = False
 COMPUTE_PRUNED_EMAIL_VERSION_FOR_FAST_TESTING = False
@@ -38,7 +37,6 @@ g_RUN_PARAMS["NUM_VALIDATION_FOLDS"] = 6
 g_RUN_PARAMS["NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL"] = 5
 g_RUN_PARAMS["MAX_ALLOWED_OPT_CRIT_DECREASE"] = 0.2
 g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
-g_RUN_PARAMS["ALLOW_RECURSION"] = False
 
 EMAIL_DETAIL_FEATURES = [
     (understandableFeatureKeywordToCategory( "RCVD" ), "From" ),
@@ -105,9 +103,6 @@ g_INITIAL_FEATURE_LISTS_TO_EVALUATE = (
     getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-SUBJECTS", "EMAIL-ADV-RCVD-SUBJECTS"),
 )
 
-g_INITIAL_FEATURE_LISTS_TO_EVALUATE = (
-    getFeatureSet("EMAIL-BASIC+DERIVED"),
-)
 
 def addComputationTimeInfo( text ):
     global g_computationTimeInfo
@@ -145,7 +140,6 @@ def createClassifier( ):
         from sklearn.svm import LinearSVC
         return LinearSVC( random_state = 42)
     return __createDecisionTreeClassifier( )
-
 
 
 def removeOutliers(dataDict, featureList):
@@ -225,24 +219,6 @@ def addEmailFeatures(dataDict, featureList):
     addComputationTimeInfo("Create email features")
 
 
-
-def getFeatureListForEmailFeatures( dataDict, emailDetailFeatures ):
-    fList = []
-    featPrefixes = []
-    for category, feature in emailDetailFeatures:
-        featPrefixes.append( getEmailFeatureNamePrefix( category, feature ) )
-    featureNames = []
-    for name, data in dataDict.iteritems():
-        featureNames = data.keys()
-        break
-    for featureName in featureNames:
-        for pref in featPrefixes:
-            if featureName.startswith( pref ):
-                fList.append(featureName)
-                break
-    return fList
-
-
 ### Task 3: Create new feature(s)
 def createNewFeatures(dataDict, featureList):
     #
@@ -265,6 +241,7 @@ def createNewFeatures(dataDict, featureList):
         for entry in dataDict.values():
             canComputeFeature = True
             for argFeatName in argFeatNames:
+                # Could remove orginal features from featureList, but maybe not always desired.
                 #if argFeatName in featureList:
                 #    featureList.remove(argFeatName)
                 if entry.get( argFeatName, "NaN" ) == "NaN":
@@ -292,7 +269,7 @@ def scaleFeatures(dataDict, featuresToScale):
     if "poi" in featuresToScale:
         featuresToScale.remove( "poi")
 
-    from sklearn.preprocessing import RobustScaler, MinMaxScaler
+    from sklearn.preprocessing import RobustScaler
     values = getFeatureValues(dataDict)
     scaler = RobustScaler(quantile_range=(1, 99))
     #scaler = MinMaxScaler()
@@ -505,22 +482,23 @@ def shouldStop( newResults, bestResults ):
             > g_RUN_PARAMS[ "MAX_ALLOWED_OPT_CRIT_DECREASE"] )
 
 
-def updateBestResult(bestResult, scores ):
+def updateBestResult( bestResult, scores ):
     optParam = g_RUN_PARAMS["OPTIMIZATION_CRIT"]
-    scores = copy.deepcopy(scores)
     if scores[optParam] > bestResult[optParam] or \
             ( scores[optParam] == bestResult[optParam] and len( scores["features_list"] ) < len( bestResult["features_list"] ) ):
         print(
         "Best {} improved from {} to {} with features {}".format(optParam,
                                                                  round(bestResult[optParam], 5), round(scores[optParam], 5),
                                                                  scores["features_list"][1:]))
-        bestResult.update(scores)
+        bestResult.update(copy.copy(scores))
         assert len(bestResult["features_list"]) == len(bestResult["features_importances"]) + 1
+        return True
     else:
         print("Best {} of {} could not be improved (New: {} with features {})".format(optParam,
                                                                                       round(bestResult[optParam], 5),
                                                                                       round(scores[optParam], 5),
                                                                                       scores["features_list"][1:]))
+        return False
 
 def printToLog( text ):
     global g_summaryLog
@@ -528,9 +506,9 @@ def printToLog( text ):
     g_summaryLog.append( "{}".format( text ) )
 
 
-
-
-def printEvalResult( bestResult, my_dataset ):
+def printEvalResult( bestResult, my_dataset, initialFeatureSet=None ):
+    if initialFeatureSet:
+        g_runInfo["FEATURES INITIALLY USED for evaluation"] = initialFeatureSet
     runName = bestResult.get( "runName", "Unnamed")
     printToLog("----------------------------")
     printToLog(""+runName)
@@ -567,13 +545,14 @@ def printEvalResult( bestResult, my_dataset ):
     printToLog("----------------------------\n")
 
 
-def runEvaluationForFeatures(runName, my_dataset, featureList):
+def runEvaluationForFeatures(runName, my_dataset, featureList, enableAutoFeatureSelection=True ):
 
     initialFeatureListInfo = featureList[1:] if len(featureList) <= 30 else summarizeFeatureList(featureList)
     g_runInfo["FEATURES INITIALLY USED for evaluation"] = "Num = {}: {}".format(len(featureList) - 1,
                                                                                 initialFeatureListInfo)
 
-    bestResult = trainAndEvaluate(my_dataset, featureList, ClfResults(featureList, runName = runName), allowRecursion=g_RUN_PARAMS["ALLOW_RECURSION"])
+    bestResult = trainAndEvaluate(my_dataset, featureList, ClfResults(featureList, runName=runName), allowRecursion=enableAutoFeatureSelection)
+    bestResult["initialFeatureSet"] = g_runInfo["FEATURES INITIALLY USED for evaluation"]
 
     printEvalResult( bestResult, my_dataset)
 
@@ -588,10 +567,9 @@ with open("final_project_dataset.pkl", "r") as data_file:
 
 addComputationTimeInfo( "Initial Data Load" )
 
-### Task 2: Remove outliers
+# Outlier removal did not seem to be beneficial, deactivated
 #removeOutliers( data_dict, features_list )
 #addComputationTimeInfo("Outlier Removal")
-
 
 data_dict, features_list = createNewFeatures( data_dict, features_list )
 
@@ -600,38 +578,55 @@ data_dict, features_list = createNewFeatures( data_dict, features_list )
 if createClassifier().__class__.__name__ != "DecisionTreeClassifier":
     scaleFeatures( data_dict, features_list )
 
+# printFeaturesAndStatistics can be used to get an overview over the feature values
 #printFeaturesAndStatistics( data_dict, features_list )
 
-g_summaryLog = []
-overallBest = ClfResults(["poi"])
-runInfoBase = copy.copy(g_runInfo)
-for run_name, features_list in g_INITIAL_FEATURE_LISTS_TO_EVALUATE:
-    print("")
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    print("STARTING RUN: {}".format(run_name))
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
-    g_computationTimeInfo = []
-    g_runInfo = copy.copy(runInfoBase)
-    for f in copy.copy(features_list):
-        if isinstance(f, tuple):
-            features_list.remove(f)
-            features_list.extend(getFeatureListForEmailFeatures(data_dict, [f]))
+def findBestFeatureSet(dataDict, featureSetsToEvaluate):
+    global g_summaryLog, g_computationTimeInfo, g_runInfo
+    g_summaryLog = []
+    overallBest = ClfResults(["poi"])
+    runInfoBase = copy.copy(g_runInfo)
+    for run_name, featureList in featureSetsToEvaluate:
+        print("")
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("STARTING RUN: {}".format(run_name))
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 
-    bestOfCurrentRun = runEvaluationForFeatures(run_name, data_dict, ["poi"] + features_list)
+        g_computationTimeInfo = []
+        g_runInfo = copy.copy(runInfoBase)
+        for f in copy.copy(featureList):
+            if isinstance(f, tuple):
+                featureList.remove(f)
+                featureList.extend(getFeatureListForEmailFeatures(dataDict, [f]))
 
-    print("")
-    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
-    print("Ended run: {}".format(run_name))
-    updateBestResult( overallBest, bestOfCurrentRun)
-    print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        bestOfCurrentRun = runEvaluationForFeatures(run_name, dataDict, ["poi"] + featureList, enableAutoFeatureSelection=True )
 
-print("\n*** REPEATING SUMMARY ***\n")
+        print("")
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print("Ended run: {}".format(run_name))
+        updateBestResult(overallBest, bestOfCurrentRun)
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    print("\n*** REPEATING SUMMARY ***\n")
+    print("\n".join(g_summaryLog))
+    return overallBest
 
-print( "\n".join( g_summaryLog ) )
+# Use this for running the feature set exploration
+#g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
+#overallBest = findBestFeatureSet( data_dict, g_INITIAL_FEATURE_LISTS_TO_EVALUATE )
+
+# Use this for reproducing the best results (best when looking at both, my kFold and external test performance)
+overallBest = runEvaluationForFeatures( "Best Overall Result", data_dict, ["poi"] +
+                                        [u'shared_receipt_with_poi', u'exchange_with_poi', u'emails_SENT_Subject_confidenti', u'emails_SENT_Subject_status'],
+                                        enableAutoFeatureSelection=False)
+
+# Use this for reproducing the best results regarding external tester performance (but seems fishy as results of my kFold is much worse)
+#overallBest = runEvaluationForFeatures( "Best External Tester Result", data_dict, ["poi"] +
+#                                        [u'emails_SENT_Subject_compani', u'emails_SENT_Subject_address'],
+#                                        enableAutoFeatureSelection=False)
 
 print("\n**********  OVERALL BEST  *************\n")
-printEvalResult( overallBest, data_dict )
+printEvalResult( overallBest, data_dict, initialFeatureSet=overallBest["initialFeatureSet"] )
 
 if DUMP_RESULTS:
     dump_classifier_and_data(overallBest["clf"], data_dict, overallBest["features_list"])

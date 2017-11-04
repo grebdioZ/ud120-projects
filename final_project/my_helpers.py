@@ -554,3 +554,19 @@ def removeFeatures(featList, featuresToRemove):
         featList.remove(f)
     print("New feature list after removeFeatures: " + str(featList[1:]))
 
+
+def getFeatureListForEmailFeatures( dataDict, emailDetailFeatures ):
+    fList = []
+    featPrefixes = []
+    for category, feature in emailDetailFeatures:
+        featPrefixes.append( getEmailFeatureNamePrefix( category, feature ) )
+    featureNames = []
+    for name, data in dataDict.iteritems():
+        featureNames = data.keys()
+        break
+    for featureName in featureNames:
+        for pref in featPrefixes:
+            if featureName.startswith( pref ):
+                fList.append(featureName)
+                break
+    return fList
