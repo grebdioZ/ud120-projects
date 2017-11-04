@@ -1,0 +1,122 @@
+*******************************************************************************
+Best results using the tester's F1 score for deciding which feature set to use.
+*******************************************************************************
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+1. EMAIL-ADV-SENT-SUBJECTS
+This is the best feature set for the provided 'tester' evaluation. Note that it does not even use the 'cheater' poi features.
+However it performs really bad using my own kFold (k=6) evaluation, as can be seen in the details below. Very strange!
+*        Accuracy_ext: 0.89600
+*              F1_ext: 0.83369
+*       Precision_ext: 0.89269
+*          Recall_ext: 0.78200
+----------------------------
+Best result scores ( averages for 6 folds ):
+* Accuracy  : 0.85833
+* F1        : 0.22222
+* Precision : 0.25000
+* Recall    : 0.25000
+
+ALLOW_RECURSION: True
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES INITIALLY USED for evaluation: Num = 22686: ['emails_RCVD_From (x2990)', 'emails_RCVD_Subject (x6303)', 'emails_SENT_Subject (x7275)', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'other', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
+
+FEATURES IN BEST CLASSIFIER: Num = 2: [u'emails_SENT_Subject_compani', u'emails_SENT_Subject_address']
+
+FEATURES IN BEST CLASSIFIER, with importances: [(u'emails_SENT_Subject_compani', 1.0), (u'emails_SENT_Subject_address', 0.0)]
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.89600	Precision: 0.89269	Recall: 0.78200	F1: 0.83369	F2: 0.80189
+	Total predictions: 3000	True positives:  782	False positives:   94	False negatives:  218	True negatives: 1906
+
+External tester results:
+*        Accuracy_ext: 0.89600
+*              F1_ext: 0.83369
+*       Precision_ext: 0.89269
+*          Recall_ext: 0.78200
+
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+2. EMAIL-BASIC+DERIVED_EMAIL-ADV-SENT-SUBJECTS
+This is the second best feature set, and this one at least also performs good in my evaluation.
+*        Accuracy_ext: 0.88689
+*              F1_ext: 0.72546
+*       Precision_ext: 0.78747
+*          Recall_ext: 0.67250
+----------------------------
+Best result scores ( averages for 6 folds ):
+* Accuracy  : 0.88651
+* F1        : 0.61667
+* Precision : 0.61111
+* Recall    : 0.63889
+
+ALLOW_RECURSION: True
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES INITIALLY USED for evaluation: Num = 7283: ['emails_SENT_Subject (x7275)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
+
+FEATURES IN BEST CLASSIFIER: Num = 6: ['shared_receipt_with_poi', 'exchange_with_poi', 'ratio_from_poi', u'emails_SENT_Subject_address', u'emails_SENT_Subject_confidenti', u'emails_SENT_Subject_status']
+
+FEATURES IN BEST CLASSIFIER, with importances: [('shared_receipt_with_poi', 0.365), ('exchange_with_poi', 0.346), (u'emails_SENT_Subject_confidenti', 0.16), ('ratio_from_poi', 0.046), (u'emails_SENT_Subject_status', 0.045), (u'emails_SENT_Subject_address', 0.039)]
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
+	Accuracy: 0.88689	Precision: 0.78747	Recall: 0.67250	F1: 0.72546	F2: 0.69273
+	Total predictions: 9000	True positives: 1345	False positives:  363	False negatives:  655	True negatives: 6637
+
+External tester results:
+*        Accuracy_ext: 0.88689
+*              F1_ext: 0.72546
+*       Precision_ext: 0.78747
+*          Recall_ext: 0.67250
+
+
+
+---------------------------------------------------------------------
+---------------------------------------------------------------------
+3. EMAIL-BASIC+DERIVED_ALL-FINANCIAL_EMAIL-ADV-SENT-ADDRESSES_EMAIL-ADV-RCVD-SENDERS_EMAIL-ADV-SENT-SUBJECTS_EMAIL-ADV-RCVD-SUBJECTS
+Third best result regarding tester F1. Contains an email address feature, which is nice. Interesting that again, financial features were apparently not needed (although in this case, they were part of the initial feature set, but if they hadn't been, the results would have been the same).
+----------------------------
+Best result scores ( averages for 6 folds ):
+* Accuracy  : 0.84286
+* F1        : 0.51667
+* Precision : 0.52778
+* Recall    : 0.52778
+
+ALLOW_RECURSION: True
+MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
+MIN_FEATURE_IMPORTANCE: 1e-06
+NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
+NUM_VALIDATION_FOLDS: 6
+OPTIMIZATION_CRIT: F1_ext
+
+FEATURES INITIALLY USED for evaluation: Num = 22686: ['emails_RCVD_From (x2990)', 'emails_RCVD_Subject (x6303)', 'emails_SENT_Subject (x7275)', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'other', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
+
+FEATURES IN BEST CLASSIFIER: Num = 5: ['shared_receipt_with_poi', 'exchange_with_poi', u'emails_RCVD_From_mike.mcconnell@enron.com', u'emails_SENT_Subject_confidenti', u'emails_RCVD_Subject_eb']
+
+FEATURES IN BEST CLASSIFIER, with importances: [('exchange_with_poi', 0.369), ('shared_receipt_with_poi', 0.359), (u'emails_SENT_Subject_confidenti', 0.144), (u'emails_RCVD_From_mike.mcconnell@enron.com', 0.07), (u'emails_RCVD_Subject_eb', 0.059)]
+
+External tester results:
+*        Accuracy_ext: 0.88244
+*              F1_ext: 0.71312
+*       Precision_ext: 0.77903
+*          Recall_ext: 0.65750

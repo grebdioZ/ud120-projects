@@ -37,8 +37,8 @@ g_RUN_PARAMS["MIN_FEATURE_IMPORTANCE"] = 1e-6
 g_RUN_PARAMS["NUM_VALIDATION_FOLDS"] = 6
 g_RUN_PARAMS["NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL"] = 5
 g_RUN_PARAMS["MAX_ALLOWED_OPT_CRIT_DECREASE"] = 0.2
-g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1_ext"
-g_RUN_PARAMS["ALLOW_RECURSION"] = True
+g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
+g_RUN_PARAMS["ALLOW_RECURSION"] = False
 
 EMAIL_DETAIL_FEATURES = [
     (understandableFeatureKeywordToCategory( "RCVD" ), "From" ),
@@ -105,28 +105,9 @@ g_INITIAL_FEATURE_LISTS_TO_EVALUATE = (
     getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-SUBJECTS", "EMAIL-ADV-RCVD-SUBJECTS"),
 )
 
-# g_INITIAL_FEATURE_LISTS_TO_EVALUATE = [
-#     ("F1_ext_winners",
-#      [x for x, y in [('exchange_with_poi', 0.369), ('shared_receipt_with_poi', 0.359), (u'emails_SENT_Subject_confidenti', 0.144), (u'emails_RCVD_From_mike.mcconnell@enron.com', 0.07), (u'emails_RCVD_Subject_eb', 0.059)]]
-#     )
-# ]
-#
-# g_INITIAL_FEATURE_LISTS_TO_EVALUATE = [
-#      ("F1_winners",  ['shared_receipt_with_poi', 'exchange_with_poi', u'emails_SENT_Subject_confidenti']
-#      )
-# ]
-#g_INITIAL_FEATURE_LISTS_TO_EVALUATE = [
-#     ("F1_ext_winners",
-#      ["emails_SENT_Subject_compani", "emails_SENT_Subject_address"]
-#     )
-#]
-# g_INITIAL_FEATURE_LISTS_TO_EVALUATE = [
-#     ("F1_winners_actual",
-#      [ "emails_RCVD_Subject_slide", "emails_RCVD_Subject_fund"]
-#      )
-# ]
-# g_RUN_PARAMS["ALLOW_RECURSION"] = False
-
+g_INITIAL_FEATURE_LISTS_TO_EVALUATE = (
+    getFeatureSet("EMAIL-BASIC+DERIVED"),
+)
 
 def addComputationTimeInfo( text ):
     global g_computationTimeInfo
@@ -211,11 +192,10 @@ def addEmailFeatures(dataDict, featureList):
                 #if entry[featureNameInDataDict] > 0.0:
                 #    print name, featureNameInDataDict, entry[featureNameInDataDict]
 
-    #emailFeatureCacheFileName = "EmailFeatures_To-From_From-To_To-Subject_From-Subject.json" #"EmailFeatures_{}.json".format( "_".join( ["{}-{}".format( category, feature) for category, feature in EMAIL_DETAIL_FEATURES] ) )
-    emailFeatureCacheFileName = "EmailFeatures_TO_FROM_SUBJECTS.json"
+    emailFeatureCacheFileName = "EmailFeatures_TO_FROM_SUBJECTS.json.gz"
     if LOAD_EMAIL_FEATURES and os.path.isfile( emailFeatureCacheFileName ):
         log("Loading stored email features from " + emailFeatureCacheFileName )
-        newFeatureValues, _ = loadFromJSON( emailFeatureCacheFileName, verbose=True)
+        newFeatureValues, _ = loadFromGzippedJSON( emailFeatureCacheFileName, verbose=True)
     else:
         log("Computing email features...")
         if RECOMPUTE_EMAILS:
@@ -575,9 +555,6 @@ def printEvalResult( bestResult, my_dataset ):
     printToLog("\nFEATURES IN BEST CLASSIFIER, with importances: {}".format(
         [(name, round(imp, 3)) for name, imp in bestResult["features_importances"]]) )
     printToLog("")
-    if DUMP_RESULTS:
-        dump_classifier_and_data(bestResult["clf"], my_dataset, bestResult["features_list"])
-        addComputationTimeInfo("dump_classifier_and_data")
     if RUN_EXTERNAL_VALIDATION:
         #externalResult = computeExternalTestResult(bestResult["clf"], my_dataset, bestResult["features_list"])
         externalResult = computeExternalTestResult(createClassifier(), my_dataset, bestResult["features_list"])
@@ -656,4 +633,5 @@ print( "\n".join( g_summaryLog ) )
 print("\n**********  OVERALL BEST  *************\n")
 printEvalResult( overallBest, data_dict )
 
-my_dataset = data_dict
+if DUMP_RESULTS:
+    dump_classifier_and_data(overallBest["clf"], data_dict, overallBest["features_list"])

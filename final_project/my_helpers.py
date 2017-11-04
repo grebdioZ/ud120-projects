@@ -1,5 +1,6 @@
 import cPickle
 import datetime
+import gzip
 import json
 import os, sys
 import time
@@ -306,6 +307,15 @@ def saveAsJSON( data, targetFileName, verbose=False ):
 def loadFromJSON(sourceFileName, verbose = False):
     start_s = time.time()
     data = json.load( open(sourceFileName, "r"))
+    elapsedTime_s = time.time() - start_s
+    if verbose:
+        log("Loaded data from {} in {} seconds".format(sourceFileName, elapsedTime_s))
+    return data, elapsedTime_s
+
+def loadFromGzippedJSON(sourceFileName, verbose = False):
+    start_s = time.time()
+    with gzip.open(sourceFileName, "rb") as f:
+        data = json.loads( f.read().decode("ascii"))
     elapsedTime_s = time.time() - start_s
     if verbose:
         log("Loaded data from {} in {} seconds".format(sourceFileName, elapsedTime_s))
