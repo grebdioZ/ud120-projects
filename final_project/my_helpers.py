@@ -436,7 +436,7 @@ def getEmailFeatureNamePrefix(category, feature):
 
 
 def categoryToUnderstandableFeatureKeyword( category ):
-    return g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD[ category]
+    return g_INTERNAL_CATEGORY_TO_UNDERSTANDABLE_KEYWORD[ category ]
 
 
 def understandableFeatureKeywordToCategory( categoryKeyword ):
@@ -527,7 +527,16 @@ def computeExternalTestResult( clf, data, feature_list ):
         return tester.main( clf=clf, dataset=data, feature_list=feature_list)
     except ValueError as e:
         print("ERROR: Exception occurred running tester: {}".format( e ))
-        return 0.0
+        return { "Accuracy":0, "F1":0, "Precision":0, "Recall":0 }
+
+
+def shortenString( string, maxLen=200, giveTruncationInfo=True ):
+    result = string[:maxLen]
+    if len(string) > maxLen:
+        result += "..."
+        if giveTruncationInfo:
+            result += " ({} characters truncated)".format( len(string) - maxLen )
+    return result
 
 
 def removeFeatures(featList, featuresToRemove):
