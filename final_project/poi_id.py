@@ -60,7 +60,7 @@ FEATURE_SETS["EMAIL-BASIC-NO-POI"] = [ 'to_messages', 'from_messages' ]
 features_list.extend(FEATURE_SETS["EMAIL-BASIC"])
 financial_features = []
 FEATURE_SETS["ALL-FINANCIAL-NO-OTHER"] = ['salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'total_stock_value', 'long_term_incentive', 'exercised_stock_options', 'deferred_income', 'expenses', 'restricted_stock', 'director_fees']
-FEATURE_SETS["ALL-FINANCIAL"] = financial_features + ['other']
+FEATURE_SETS["ALL-FINANCIAL"] = FEATURE_SETS["ALL-FINANCIAL-NO-OTHER"] + ['other']
 features_list.extend(FEATURE_SETS["ALL-FINANCIAL"])
 
 def getFeatureSet(*args):
