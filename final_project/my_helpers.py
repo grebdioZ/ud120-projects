@@ -1,4 +1,5 @@
 import cPickle
+import copy
 import datetime
 import gzip
 import json
@@ -6,7 +7,6 @@ import os, sys
 import time
 
 import numpy
-from scipy.stats import chi2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
 
@@ -570,3 +570,4 @@ def getFeatureListForEmailFeatures( dataDict, emailDetailFeatures ):
                 fList.append(featureName)
                 break
     return fList
+

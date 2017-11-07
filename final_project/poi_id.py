@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import copy
 import itertools
 import pickle
 import random
@@ -8,7 +7,7 @@ from math import sqrt
 random.seed(42)
 import numpy as np
 
-from final_project.my_helpers import *
+from my_helpers import *
 
 sys.path.append("../tools/")
 
@@ -388,7 +387,7 @@ def trainAndEvaluate(dataDict, featureList, bestResult, allowRecursion=True):
     ### Extract features and labels from dataset for local testing
     if not allowRecursion:
         print("")
-        print("******* trainAndEvaluate: probing only w/o recursion ************** on features {}".format( shortenString( ", ".join(featureList[1:] ))))
+        print("******* trainAndEvaluate: w/o recursion ************** on features {}".format( shortenString( ", ".join(featureList[1:] ))))
     else:
         print("")
         print("********************************************")
@@ -443,7 +442,7 @@ def trainAndEvaluate(dataDict, featureList, bestResult, allowRecursion=True):
         scores["features_list"] = copy.copy(featureList)
         scores["features_importances"] = copy.copy(featuresByImportance)
         newResultsTooBad = shouldStop( scores, bestResult )
-        updateBestResult( bestResult, scores )
+        updateBestResult(bestResult, scores)
         if not allowRecursion:
             print("No recursion allowed, returning.")
             return bestResult
@@ -481,24 +480,6 @@ def shouldStop( newResults, bestResults ):
     return (bestResults[g_RUN_PARAMS["OPTIMIZATION_CRIT"]] - newResults[g_RUN_PARAMS["OPTIMIZATION_CRIT"] ]
             > g_RUN_PARAMS[ "MAX_ALLOWED_OPT_CRIT_DECREASE"] )
 
-
-def updateBestResult( bestResult, scores ):
-    optParam = g_RUN_PARAMS["OPTIMIZATION_CRIT"]
-    if scores[optParam] > bestResult[optParam] or \
-            ( scores[optParam] == bestResult[optParam] and len( scores["features_list"] ) < len( bestResult["features_list"] ) ):
-        print(
-        "Best {} improved from {} to {} with features {}".format(optParam,
-                                                                 round(bestResult[optParam], 5), round(scores[optParam], 5),
-                                                                 scores["features_list"][1:]))
-        bestResult.update(copy.copy(scores))
-        assert len(bestResult["features_list"]) == len(bestResult["features_importances"]) + 1
-        return True
-    else:
-        print("Best {} of {} could not be improved (New: {} with features {})".format(optParam,
-                                                                                      round(bestResult[optParam], 5),
-                                                                                      round(scores[optParam], 5),
-                                                                                      scores["features_list"][1:]))
-        return False
 
 def printToLog( text ):
     global g_summaryLog
@@ -560,26 +541,23 @@ def runEvaluationForFeatures(runName, my_dataset, featureList, enableAutoFeature
     return bestResult
 
 
-
-### Load the dictionary containing the dataset
-with open("final_project_dataset.pkl", "r") as data_file:
-    data_dict = pickle.load(data_file)
-
-addComputationTimeInfo( "Initial Data Load" )
-
-# Outlier removal did not seem to be beneficial, deactivated
-#removeOutliers( data_dict, features_list )
-#addComputationTimeInfo("Outlier Removal")
-
-data_dict, features_list = createNewFeatures( data_dict, features_list )
-
-#features_list = ['poi', 'exchange_with_poi', 'shared_receipt_with_poi']
-
-if createClassifier().__class__.__name__ != "DecisionTreeClassifier":
-    scaleFeatures( data_dict, features_list )
-
-# printFeaturesAndStatistics can be used to get an overview over the feature values
-#printFeaturesAndStatistics( data_dict, features_list )
+def updateBestResult( bestResult, scores ):
+    optParam = g_RUN_PARAMS["OPTIMIZATION_CRIT"]
+    if scores[optParam] > bestResult[optParam] or \
+            ( scores[optParam] == bestResult[optParam] and len( scores["features_list"] ) < len( bestResult["features_list"] ) ):
+        print(
+        "Best {} improved from {} to {} with features {}".format(optParam,
+                                                                 round(bestResult[optParam], 5), round(scores[optParam], 5),
+                                                                 scores["features_list"][1:]))
+        bestResult.update(copy.copy(scores))
+        assert len(bestResult["features_list"]) == len(bestResult["features_importances"]) + 1
+        return True
+    else:
+        print("Best {} of {} could not be improved (New: {} with features {})".format(optParam,
+                                                                                      round(bestResult[optParam], 5),
+                                                                                      round(scores[optParam], 5),
+                                                                                      scores["features_list"][1:]))
+        return False
 
 
 def findBestFeatureSet(dataDict, featureSetsToEvaluate):
@@ -609,24 +587,48 @@ def findBestFeatureSet(dataDict, featureSetsToEvaluate):
         print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     print("\n*** REPEATING SUMMARY ***\n")
     print("\n".join(g_summaryLog))
+
+    print("\n**********  OVERALL BEST  *************\n")
+    printEvalResult(overallBest, data_dict, initialFeatureSet=overallBest["initialFeatureSet"])
     return overallBest
 
+### Load the dictionary containing the dataset
+with open("final_project_dataset.pkl", "r") as data_file:
+    data_dict = pickle.load(data_file)
+
+addComputationTimeInfo( "Initial Data Load" )
+
+# Outlier removal did not seem to be beneficial, deactivated
+#removeOutliers( data_dict, features_list )
+#addComputationTimeInfo("Outlier Removal")
+
+data_dict, features_list = createNewFeatures( data_dict, features_list )
+
+#features_list = ['poi', 'exchange_with_poi', 'shared_receipt_with_poi']
+
+if createClassifier().__class__.__name__ != "DecisionTreeClassifier":
+    scaleFeatures( data_dict, features_list )
+
+# printFeaturesAndStatistics can be used to get an overview over the feature values
+#printFeaturesAndStatistics( data_dict, features_list )
+
+
+
+
 # Use this for running the feature set exploration
-#g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
-#overallBest = findBestFeatureSet( data_dict, g_INITIAL_FEATURE_LISTS_TO_EVALUATE )
+g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
+overallBest = findBestFeatureSet( data_dict, g_INITIAL_FEATURE_LISTS_TO_EVALUATE )
+
 
 # Use this for reproducing the best results (best when looking at both, my kFold and external test performance)
-overallBest = runEvaluationForFeatures( "Best Overall Result", data_dict, ["poi"] +
-                                        [u'shared_receipt_with_poi', u'exchange_with_poi', u'emails_SENT_Subject_confidenti', u'emails_SENT_Subject_status'],
-                                        enableAutoFeatureSelection=False)
-
-# Use this for reproducing the best results regarding external tester performance (but seems fishy as results of my kFold is much worse)
-#overallBest = runEvaluationForFeatures( "Best External Tester Result", data_dict, ["poi"] +
-#                                        [u'emails_SENT_Subject_compani', u'emails_SENT_Subject_address'],
+#overallBest = runEvaluationForFeatures( "Best Feature Set in General", data_dict, ["poi"] +
+#                                        [u'shared_receipt_with_poi', u'exchange_with_poi', u'emails_SENT_Subject_confidenti', u'emails_SENT_Subject_status'],
 #                                        enableAutoFeatureSelection=False)
 
-print("\n**********  OVERALL BEST  *************\n")
-printEvalResult( overallBest, data_dict, initialFeatureSet=overallBest["initialFeatureSet"] )
+# Use this for reproducing the best results regarding external tester performance (but seems fishy as results of my kFold is much worse)
+#overallBest = runEvaluationForFeatures( "Best Feature Set for External Tester", data_dict, ["poi"] +
+#                                        [u'emails_SENT_Subject_compani', u'emails_SENT_Subject_address'],
+#                                        enableAutoFeatureSelection=False)
 
 if DUMP_RESULTS:
     dump_classifier_and_data(overallBest["clf"], data_dict, overallBest["features_list"])
