@@ -63,17 +63,17 @@ FEATURE_SETS["ALL-FINANCIAL-NO-OTHER"] = ['salary', 'deferral_payments', 'total_
 FEATURE_SETS["ALL-FINANCIAL"] = FEATURE_SETS["ALL-FINANCIAL-NO-OTHER"] + ['other']
 features_list.extend(FEATURE_SETS["ALL-FINANCIAL"])
 
+
 def getFeatureSet(*args):
     return "_".join( args ), list( itertools.chain.from_iterable([ FEATURE_SETS[key] for key in args]) )
 
-g_INITIAL_FEATURE_LISTS_TO_EVALUATE = []
-g_TESTED_FEATURE_SETS = ( "EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SUBJECTS", "EMAIL-ADV-SENT-SUBJECTS" )
-for L in range(1, len(g_TESTED_FEATURE_SETS)+1):
-    for subset in itertools.combinations( g_TESTED_FEATURE_SETS, L ):
-        g_INITIAL_FEATURE_LISTS_TO_EVALUATE.append( getFeatureSet( *subset ) )
 
-
-print("Number of different feature sets: {}, number of feature set combinations to test: {}".format( len(g_TESTED_FEATURE_SETS), len(g_INITIAL_FEATURE_LISTS_TO_EVALUATE) ) )
+def getFeatureSetCombinations( elementaryFeatureSets ):
+    featureSetCombinations = []
+    for L in range( 1, len(elementaryFeatureSets) + 1 ):
+        for subset in itertools.combinations( elementaryFeatureSets, L ):
+            featureSetCombinations.append( getFeatureSet( *subset ) )
+    return featureSetCombinations
 
 
 def addComputationTimeInfo( text ):
@@ -586,11 +586,13 @@ if createClassifier().__class__.__name__ != "DecisionTreeClassifier":
 #printFeaturesAndStatistics( data_dict, features_list )
 
 
-
-
 # Use this for running the feature set exploration
-#g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
-#overallBest = findBestFeatureSet( data_dict, g_INITIAL_FEATURE_LISTS_TO_EVALUATE )
+# g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
+# featureSetsToTest = ( "EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SUBJECTS", "EMAIL-ADV-SENT-SUBJECTS" )
+# initialFeatureListsToEvaluate = getFeatureSetCombinations(featureSetsToTest)
+# print("Number of different feature sets: {}, number of feature set combinations to test: {}".format(
+#     len( featureSetsToTest ), len(initialFeatureListsToEvaluate) ) )
+# overallBest = findBestFeatureSet(data_dict, initialFeatureListsToEvaluate)
 
 
 # Use this for reproducing the best results (best when looking at both, my kFold and external test performance)

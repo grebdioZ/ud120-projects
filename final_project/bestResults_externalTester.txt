@@ -1,5 +1,12 @@
 *******************************************************************************
-Best results using the tester's F1 score for deciding which feature set to use.
+Best results using the tester's F1 score for deciding which feature set to use
+witht the classifier
+
+DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=4,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            presort=False, random_state=42, splitter='best')
 *******************************************************************************
 
 ---------------------------------------------------------------------
@@ -36,7 +43,7 @@ External tester results:
 
 ----------------------------
 2. EMAIL-ADV-RCVD-SENDERS_EMAIL-ADV-RCVD-SUBJECTS_EMAIL-ADV-SENT-SUBJECTS
-Like the previous one, but now only with the subject slide feature...
+Now only with the received subject slide feature... again, interesting.
 ----------------------------
 Best result scores ( averages for 6 folds ):
 * Accuracy  : 0.80556
