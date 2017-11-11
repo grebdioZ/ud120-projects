@@ -11,7 +11,7 @@ BEST RESULTS INCLUDING EMAIL ARCHIVE ANALYSIS
 Using the provided data dictionary plus subject and address features from the provided email archive, the best results I could achieve (as of Nov 2017) using automatic feature selection and a DecisionTreeClassifier with  were:
 
 __Best result scores ( kFolds, averages for 6 folds ):__
-|-----------|---------|
+| Parameter | Score   |
 |-----------|--------:|
 | Accuracy  | 0.88988 |
 | F1        | 0.78704 |
@@ -19,7 +19,7 @@ __Best result scores ( kFolds, averages for 6 folds ):__
 | Recall    | 0.83333 |
 
 __External 'tester' module results:__
-|-----------|---------|
+| Parameter | Score   |
 |-----------|--------:|
 | Accuracy  | 0.87700 |
 | F1        | 0.73548 |
@@ -49,7 +49,7 @@ FEATURES IN BEST CLASSIFIER, with importances: [(u'emails_SENT_To_bob.butts@enro
 BEST RESULTS USING ONLY THE PROVIDED data_dict INFO
 ---
 __Best result scores ( kFolds, averages for 6 folds ):__
-|-----------|---------|
+| Parameter | Score   |
 |-----------|--------:|
 | Accuracy  | 0.86190 |
 | F1        | 0.57778 |
@@ -57,7 +57,7 @@ __Best result scores ( kFolds, averages for 6 folds ):__
 | Recall    | 0.62500 |
 
 __External 'tester' module results:__
-|-----------|---------|
+| Parameter | Score   |
 |-----------|--------:|
 | Accuracy  | 0.89122 |
 | F1        | 0.52545 |
