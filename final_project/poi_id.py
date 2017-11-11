@@ -66,41 +66,14 @@ features_list.extend(FEATURE_SETS["ALL-FINANCIAL"])
 def getFeatureSet(*args):
     return "_".join( args ), list( itertools.chain.from_iterable([ FEATURE_SETS[key] for key in args]) )
 
-g_INITIAL_FEATURE_LISTS_TO_EVALUATE = (
-    getFeatureSet("EMAIL-BASIC+DERIVED"),
-    getFeatureSet("ALL-FINANCIAL"),
-    getFeatureSet("EMAIL-ADV-RCVD-SENDERS"),
-    getFeatureSet("EMAIL-ADV-SENT-ADDRESSES"),
-    getFeatureSet("EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("EMAIL-ADV-SENT-SUBJECTS"),
+g_INITIAL_FEATURE_LISTS_TO_EVALUATE = []
+g_TESTED_FEATURE_SETS = ( "EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SUBJECTS", "EMAIL-ADV-SENT-SUBJECTS" )
+for L in range(1, len(g_TESTED_FEATURE_SETS)+1):
+    for subset in itertools.combinations( g_TESTED_FEATURE_SETS, L ):
+        g_INITIAL_FEATURE_LISTS_TO_EVALUATE.append( getFeatureSet( *subset ) )
 
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "EMAIL-ADV-RCVD-SENDERS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "EMAIL-ADV-SENT-ADDRESSES"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "EMAIL-ADV-SENT-SUBJECTS"),
 
-    getFeatureSet("ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-ADDRESSES"),
-    getFeatureSet("ALL-FINANCIAL", "EMAIL-ADV-RCVD-SUBJECTS", "EMAIL-ADV-SENT-SUBJECTS"),
-    getFeatureSet("ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-SENT-SUBJECTS"),
-    getFeatureSet("ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-SUBJECTS"),
-
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-SUBJECTS"),
-
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-ADDRESSES"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SUBJECTS", "EMAIL-ADV-SENT-SUBJECTS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-SENT-SUBJECTS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SUBJECTS"),
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-SUBJECTS"),
-
-    getFeatureSet("EMAIL-BASIC+DERIVED", "ALL-FINANCIAL", "EMAIL-ADV-SENT-ADDRESSES", "EMAIL-ADV-RCVD-SENDERS", "EMAIL-ADV-SENT-SUBJECTS", "EMAIL-ADV-RCVD-SUBJECTS"),
-)
+print("Number of different feature sets: {}, number of feature set combinations to test: {}".format( len(g_TESTED_FEATURE_SETS), len(g_INITIAL_FEATURE_LISTS_TO_EVALUATE) ) )
 
 
 def addComputationTimeInfo( text ):
@@ -616,14 +589,15 @@ if createClassifier().__class__.__name__ != "DecisionTreeClassifier":
 
 
 # Use this for running the feature set exploration
-g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
-overallBest = findBestFeatureSet( data_dict, g_INITIAL_FEATURE_LISTS_TO_EVALUATE )
+#g_RUN_PARAMS["OPTIMIZATION_CRIT"] = "F1"
+#overallBest = findBestFeatureSet( data_dict, g_INITIAL_FEATURE_LISTS_TO_EVALUATE )
 
 
 # Use this for reproducing the best results (best when looking at both, my kFold and external test performance)
-#overallBest = runEvaluationForFeatures( "Best Feature Set in General", data_dict, ["poi"] +
-#                                        [u'shared_receipt_with_poi', u'exchange_with_poi', u'emails_SENT_Subject_confidenti', u'emails_SENT_Subject_status'],
-#                                        enableAutoFeatureSelection=False)
+overallBest = runEvaluationForFeatures( "Best Feature Set in General", data_dict, ["poi"] +
+                                        [u'emails_RCVD_From_lavorato@enron.com', u'emails_SENT_To_bob.butts@enron.com',
+                                         u'emails_SENT_Subject_new'],
+                                        enableAutoFeatureSelection=False)
 
 # Use this for reproducing the best results regarding external tester performance (but seems fishy as results of my kFold is much worse)
 #overallBest = runEvaluationForFeatures( "Best Feature Set for External Tester", data_dict, ["poi"] +

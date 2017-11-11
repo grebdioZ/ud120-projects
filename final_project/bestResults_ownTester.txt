@@ -12,20 +12,18 @@ Best result scores ( averages for 6 folds ):
 * Precision : 0.70833
 * Recall    : 0.91667
 
-ALLOW_RECURSION: True
 MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
 MIN_FEATURE_IMPORTANCE: 1e-06
 NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
 NUM_VALIDATION_FOLDS: 6
 OPTIMIZATION_CRIT: F1
 
-FEATURES INITIALLY USED for evaluation: Num = 22686: ['emails_RCVD_From (x2990)', 'emails_RCVD_Subject (x6303)', 'emails_SENT_Subject (x7275)', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'other', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
+FEATURES INITIALLY USED for evaluation: Num = 6303: ['emails_RCVD_Subject (x6303)']
 
 FEATURES IN BEST CLASSIFIER: Num = 2: [u'emails_RCVD_Subject_fund', u'emails_RCVD_Subject_slide']
 
 FEATURES IN BEST CLASSIFIER, with importances: [(u'emails_RCVD_Subject_slide', 0.917), (u'emails_RCVD_Subject_fund', 0.083)]
 
-Tester features: ['poi', u'emails_RCVD_Subject_fund', u'emails_RCVD_Subject_slide']
 DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
             max_features=None, max_leaf_nodes=None,
             min_impurity_split=1e-07, min_samples_leaf=4,
@@ -40,11 +38,11 @@ External tester results:
 *       Precision_ext: 0.54448
 *          Recall_ext: 0.81400
 
-
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
-2. EMAIL-BASIC+DERIVED_ALL-FINANCIAL_EMAIL-ADV-SENT-ADDRESSES_EMAIL-ADV-SENT-SUBJECTS
-This is the best feature set I could find regarding F1 performance on both my own and the external tester, which makes it my favorite result!
+----------------------------
+2. EMAIL-BASIC+DERIVED_EMAIL-ADV-RCVD-SUBJECTS_EMAIL-ADV-SENT-SUBJECTS
+Maybe nicest result in terms of F1 and F1_ext performance, and also considering the selected feature emails_SENT_Subject_confidenti :) 
 ----------------------------
 Best result scores ( averages for 6 folds ):
 * Accuracy  : 0.91984
@@ -52,14 +50,13 @@ Best result scores ( averages for 6 folds ):
 * Precision : 0.77778
 * Recall    : 0.76389
 
-ALLOW_RECURSION: True
 MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
 MIN_FEATURE_IMPORTANCE: 1e-06
 NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
 NUM_VALIDATION_FOLDS: 6
 OPTIMIZATION_CRIT: F1
 
-FEATURES INITIALLY USED for evaluation: Num = 13393: ['emails_SENT_Subject (x7275)', 'emails_SENT_To (x6109)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'other', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
+FEATURES INITIALLY USED for evaluation: Num = 13586: ['emails_RCVD_Subject (x6303)', 'emails_SENT_Subject (x7275)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
 
 FEATURES IN BEST CLASSIFIER: Num = 4: ['shared_receipt_with_poi', 'exchange_with_poi', u'emails_SENT_Subject_confidenti', u'emails_SENT_Subject_status']
 
@@ -74,7 +71,7 @@ External tester results:
 
 ---------------------------------------------------------------------
 ---------------------------------------------------------------------
-3. EMAIL-BASIC+DERIVED_ALL-FINANCIAL_EMAIL-ADV-RCVD-SENDERS_EMAIL-ADV-SENT-SUBJECTS
+3. EMAIL-BASIC+DERIVED_EMAIL-ADV-SENT-SUBJECTS
 Not so interesting, like the previous one, but without emails_SENT_Subject_status, which makes it only a little worse for my evaluation, but substantially worse for the external one.
 ----------------------------
 Best result scores ( averages for 6 folds ):
@@ -83,20 +80,18 @@ Best result scores ( averages for 6 folds ):
 * Precision : 0.75000
 * Recall    : 0.79167
 
-ALLOW_RECURSION: True
 MAX_ALLOWED_OPT_CRIT_DECREASE: 0.2
 MIN_FEATURE_IMPORTANCE: 1e-06
 NUM_UNIMPORTANT_FEATURES_TO_TRY_REMOVAL: 5
 NUM_VALIDATION_FOLDS: 6
 OPTIMIZATION_CRIT: F1
 
-FEATURES INITIALLY USED for evaluation: Num = 10274: ['emails_RCVD_From (x2990)', 'emails_SENT_Subject (x7275)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'other', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
+FEATURES INITIALLY USED for evaluation: Num = 7283: ['emails_SENT_Subject (x7275)', 'exchange_with_poi', 'from_messages', 'from_poi_to_this_person', 'from_this_person_to_poi', 'ratio_from_poi', 'ratio_to_poi', 'shared_receipt_with_poi', 'to_messages']
 
 FEATURES IN BEST CLASSIFIER: Num = 3: ['shared_receipt_with_poi', 'exchange_with_poi', u'emails_SENT_Subject_confidenti']
 
 FEATURES IN BEST CLASSIFIER, with importances: [('exchange_with_poi', 0.473), ('shared_receipt_with_poi', 0.347), (u'emails_SENT_Subject_confidenti', 0.18)]
 
-Tester features: ['poi', 'shared_receipt_with_poi', 'exchange_with_poi', u'emails_SENT_Subject_confidenti']
 DecisionTreeClassifier(class_weight=None, criterion='entropy', max_depth=None,
             max_features=None, max_leaf_nodes=None,
             min_impurity_split=1e-07, min_samples_leaf=4,
