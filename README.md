@@ -53,7 +53,7 @@ BEST RESULTS USING ONLY THE PROVIDED data_dict INFO
 __Best result scores ( kFolds, averages for 6 folds ):__
 
 | Parameter | Score   |
-|-----------|--------:|
+| --------- | ------- |
 | Accuracy  | 0.86190 |
 | F1        | 0.57778 |
 | Precision | 0.63889 |
@@ -62,7 +62,7 @@ __Best result scores ( kFolds, averages for 6 folds ):__
 __External 'tester' module results:__
 
 | Parameter | Score   |
-|-----------|--------:|
+| --------- | ------- |
 | Accuracy  | 0.89122 |
 | F1        | 0.52545 |
 | Precision | 0.50988 |
